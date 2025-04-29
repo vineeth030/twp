@@ -39,4 +39,13 @@ class TaskController extends Controller
 
         return response()->json(['tasks' => $tasks]);
     }
+
+    public function reassign(Request $request){
+        
+        Task::where('id', $request->input('task_id'))->update([
+            'assigned_to' => $request->input('assigned_to')
+        ]);
+
+        return response()->json(['message' => 'Task updated successfully'], 200);
+    }
 }

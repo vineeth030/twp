@@ -11,10 +11,11 @@ Route::get('/users', function () {
 });
 
 Route::get('/employees', function () {
-    return response()->json(['employees' => Employee::all()]);
+    return response()->json(['employees' => Employee::with(['task'])->get()]);
 });
 
 Route::post('/tasks', [TaskController::class, 'store']);
+Route::post('/tasks/reassign', [TaskController::class, 'reassign']);
 Route::get('/tasks', [TaskController::class, 'index']);
 
 Route::get('/user', function (Request $request) {

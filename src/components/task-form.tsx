@@ -22,6 +22,13 @@ export default function TaskForm() {
   const [employees, setEmployees] = useState<Employee[]>([])
   const [assignedToId, setAssignedToId] = useState("")
 
+  const fetchEmployees = () => {
+    fetch('http://localhost:8000/api/employees')
+      .then((res) => res.json())
+      .then((data) => setEmployees(data.employees))
+      .catch((err) => console.error(err));
+  }
+
   useEffect(() => {
     fetch('http://localhost:8000/api/employees')
       .then((res) => res.json())
@@ -61,6 +68,7 @@ export default function TaskForm() {
         const newTask = await response.json(); // Assuming your API returns the newly created task
         console.log('Task created:', newTask);
         setTasks([...tasks, newTask]); // Update the local tasks state
+        fetchEmployees();
         setTaskName('');
         setHours('');
         setAssignedToId('');
