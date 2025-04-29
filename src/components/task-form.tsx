@@ -4,25 +4,75 @@ import type React from "react"
 
 import { useState, useEffect } from "react"
 
+interface Employee {
+    id: number,
+    name: string
+}
+
+interface Task {
+    id: number,
+    name: string,
+    hours: number
+}
+
 export default function TaskForm() {
   const [taskName, setTaskName] = useState("")
+  const [tasks, setTasks] = useState<Task[]>([])
   const [hours, setHours] = useState("")
-  const [employee, setEmployee] = useState("")
+  const [employees, setEmployees] = useState<Employee[]>([])
+  const [assignedToId, setAssignedToId] = useState("")
 
   useEffect(() => {
     fetch('http://localhost:8000/api/employees')
       .then((res) => res.json())
-      .then((data) => setEmployee(data))
+      .then((data) => setEmployees(data.employees))
       .catch((err) => console.error(err));
   }, []);
 
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault()
-    console.log({ taskName, hours, employee })
-    // Here you would typically add the task to your task list
-    setTaskName("")
-    setHours("")
-    setEmployee("")
+  const handleEmployeeChange = (e) => {
+    setAssignedToId(e.target.value);
+    // You might want to do something else with the selected employee ID here,
+    // like updating a task object or triggering an API call.
+    console.log('Selected Employee ID:', e.target.value);
+  };
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+
+    const newTaskData = {
+      name: taskName,
+      hours: parseFloat(hours), // Ensure hours is a number
+      assigned_to: assignedToId, // Send an array of employee IDs
+      // You might have other fields to include based on your API
+    };
+
+    try {
+      const response = await fetch('http://localhost:8000/api/tasks', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          // You might need to include an authorization token here
+          // 'Authorization': `Bearer ${localStorage.getItem('authToken')}`,
+        },
+        body: JSON.stringify(newTaskData),
+      });
+
+      if (response.ok) {
+        const newTask = await response.json(); // Assuming your API returns the newly created task
+        console.log('Task created:', newTask);
+        setTasks([...tasks, newTask]); // Update the local tasks state
+        setTaskName('');
+        setHours('');
+        setAssignedToId('');
+      } else {
+        const errorData = await response.json();
+        console.error('Error creating task:', errorData);
+        // Handle the error, display a message to the user, etc.
+      }
+    } catch (error) {
+      console.error('Network error:', error);
+      // Handle network errors
+    }
   }
 
   return (
@@ -36,11 +86,11 @@ export default function TaskForm() {
     className="px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" />
         </div>
         <div>
-            <select id="options" value={employee} onChange={(e) => setEmployee(e.target.value)} name="options" className="block w-full rounded-lg border border-gray-300 bg-white p-2.5 text-gray-900 focus:border-blue-500 focus:ring-blue-500">
+            <select id="options" onChange={handleEmployeeChange} value={assignedToId} name="options" className="block w-full rounded-lg border border-gray-300 bg-white p-2.5 text-gray-900 focus:border-blue-500 focus:ring-blue-500">
                 <option value="">Assign to</option>
-                <option value="option1">Option 1</option>
-                <option value="option2">Option 2</option>
-                <option value="option3">Option 3</option>
+                { employees.map((employee) => (
+                    <option key={employee.id} value={employee.id}>{employee.name}</option>
+                )) }
             </select>
         </div>
       </div>

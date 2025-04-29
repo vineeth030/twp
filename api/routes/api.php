@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\TaskController;
 use App\Models\Employee;
 use App\Models\User;
 use Illuminate\Http\Request;
@@ -10,8 +11,11 @@ Route::get('/users', function () {
 });
 
 Route::get('/employees', function () {
-    return Employee::all();
+    return response()->json(['employees' => Employee::all()]);
 });
+
+Route::post('/tasks', [TaskController::class, 'store']);
+Route::get('/tasks', [TaskController::class, 'index']);
 
 Route::get('/user', function (Request $request) {
     return $request->user();
