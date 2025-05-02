@@ -1,25 +1,12 @@
 "use client"
 
-import type React from "react"
-
 import { useState, useEffect } from "react"
-
-interface Employee {
-    id: number,
-    name: string
-}
-
-interface Task {
-    id: number,
-    name: string,
-    hours: number
-}
 
 export default function TaskForm() {
   const [taskName, setTaskName] = useState("")
-  const [tasks, setTasks] = useState<Task[]>([])
+  const [tasks, setTasks] = useState([])
   const [hours, setHours] = useState("")
-  const [employees, setEmployees] = useState<Employee[]>([])
+  const [employees, setEmployees] = useState([])
   const [assignedToId, setAssignedToId] = useState("")
 
   const fetchEmployees = () => {
@@ -43,7 +30,7 @@ export default function TaskForm() {
     console.log('Selected Employee ID:', e.target.value);
   };
 
-  const handleSubmit = async (e: React.FormEvent) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
 
     const newTaskData = {

@@ -1,21 +1,9 @@
 import { useState, useEffect } from "react"
 
-interface Task {
-    id: number,
-    name: string,
-    hours: number
-}
-
-interface Employee {
-    id: number,
-    name: string,
-    task: Task
-}
-
 export default function TaskListing() {
     const [draggingTaskId, setDraggingTaskId] = useState(0)
-    const [tasks, setTasks] = useState<Task[]>([]) 
-    const [employees, setEmployees] = useState<Employee[]>([])
+    const [tasks, setTasks] = useState([]) 
+    const [employees, setEmployees] = useState([])
 
     useEffect(() => {
         fetch('http://localhost:8000/api/employees')
@@ -30,7 +18,7 @@ export default function TaskListing() {
 
       }, []);
 
-    const handleTaskDrop = async (e: any, employee: Employee) => {
+    const handleTaskDrop = async (e, employee) => {
         const draggedFromId = e.dataTransfer.getData("fromEmployeeId");
         const draggedTaskId = e.dataTransfer.getData("taskId");
         const fromId = parseInt(draggedFromId, 10);
