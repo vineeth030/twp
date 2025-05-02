@@ -41,6 +41,8 @@ class TaskController extends Controller
     }
 
     public function reassign(Request $request){
+
+        Task::where('assigned_to', $request->input('assigned_to'))->delete();
         
         Task::where('id', $request->input('task_id'))->update([
             'assigned_to' => $request->input('assigned_to')

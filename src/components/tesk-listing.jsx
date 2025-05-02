@@ -1,22 +1,19 @@
 import { useState, useEffect } from "react"
 
-export default function TaskListing() {
-    const [draggingTaskId, setDraggingTaskId] = useState(0)
+export default function TaskListing({ employees, fetchEmployees }) {
     const [tasks, setTasks] = useState([]) 
-    const [employees, setEmployees] = useState([])
 
     useEffect(() => {
-        fetch('http://localhost:8000/api/employees')
-          .then((res) => res.json())
-          .then((data) => setEmployees(data.employees))
-          .catch((err) => console.error(err));
-
         fetch('http://localhost:8000/api/tasks')
           .then((res) => res.json())
           .then((data) => setTasks(data.tasks))
           .catch((err) => console.error(err));
 
       }, []);
+
+    const handleOnClick = () => {
+      alert('on click');
+    }
 
     const handleTaskDrop = async (e, employee) => {
         const draggedFromId = e.dataTransfer.getData("fromEmployeeId");
@@ -37,7 +34,6 @@ export default function TaskListing() {
               method: 'POST',
               headers: {
                 'Content-Type': 'application/json',
-                // You might need to include an authorization token here
                 // 'Authorization': `Bearer ${localStorage.getItem('authToken')}`,
               },
               body: JSON.stringify(draggedTaskData),
@@ -45,28 +41,14 @@ export default function TaskListing() {
       
             if (response.ok) {
               const newTask = await response.json(); // Assuming your API returns the newly created task
-              console.log('Task created:', newTask);
-              //setTasks([...tasks, newTask]); // Update the local tasks state
+              fetchEmployees()
             } else {
               const errorData = await response.json();
               console.error('Error creating task:', errorData);
-              // Handle the error, display a message to the user, etc.
             }
           } catch (error) {
             console.error('Network error:', error);
-            // Handle network errors
           }
-
-        setEmployees((prev) => {
-          const fromEmp = prev.find((emp) => emp.id === fromId);
-          if (!fromEmp || !fromEmp.task) return prev;
-
-          return prev.map((emp) => {
-            if (emp.id === fromId) return { ...emp, task: null };
-            if (emp.id === employee.id) return { ...emp, task: fromEmp.task };
-            return emp;
-          });
-        });
     }
 
     return (
@@ -83,7 +65,7 @@ export default function TaskListing() {
                                     console.log(`Dragging from employee ID: ${employee.id}`);
                                     e.dataTransfer.setData("fromEmployeeId", employee.id.toString());
                                     e.dataTransfer.setData("taskId", employee.task.id.toString());
-                                  }} className="bg-gray-100 rounded-xs border shadow p-2 text-sm mx-1">
+                                  }} onClick={handleOnClick} className="bg-gray-100 rounded-xs border shadow p-2 text-sm mx-1">
                                     <h6 className="font-semibold">{employee.task.name}</h6>
                                     {employee.task.hours && <span className="text-gray-600">{employee.task.hours} hours</span>}
                                 </div>
