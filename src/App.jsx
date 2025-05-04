@@ -31,7 +31,7 @@ function App() {
         <h2 className="text-2xl font-bold mb-6">Task Manager</h2>
         {showEmployees && (
           <>
-            <EmployeeForm employees={employees} />
+            <EmployeeForm employees={employees} setEmployees={setEmployees} />
             <EmployeeListing employees={employees} />
           </>
         )}

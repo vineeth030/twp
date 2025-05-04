@@ -53,26 +53,20 @@ export default function TaskListing({ employees, fetchEmployees }) {
 
     return (
         <div>
-            <div className="flex gap-2 mt-2">
-                {
-                    employees.map((employee) => (
-                        <div onDragOver={(e) => e.preventDefault()}
-                        onDrop={(e) => handleTaskDrop(e, employee)}
-                         key={employee.id} className="flex-1 aspect-square border-1 border-gray-300">
-                            <p className="text-left p-2">{employee.name}</p>
-                            {employee.task && (
-                                <div draggable onDragStart={(e) => {
+            <div className="text-left">
+              { 
+                employees.map((employee) => (
+                  <div onDragOver={(e) => e.preventDefault()} onDrop={(e) => handleTaskDrop(e, employee)} key={employee.id} className="border border-gray-400 shadow mt-2 p-2">
+                    {employee.name} {employee.task && ( <span draggable onDragStart={(e) => {
                                     console.log(`Dragging from employee ID: ${employee.id}`);
                                     e.dataTransfer.setData("fromEmployeeId", employee.id.toString());
                                     e.dataTransfer.setData("taskId", employee.task.id.toString());
-                                  }} onClick={handleOnClick} className="bg-gray-100 rounded-xs border shadow p-2 text-sm mx-1">
-                                    <h6 className="font-semibold">{employee.task.name}</h6>
-                                    {employee.task.hours && <span className="text-gray-600">{employee.task.hours} hours</span>}
-                                </div>
-                            )}
-                        </div>
-                    ))
-                }
+                                  }} className="bg-blue-500 rounded-xs border shadow p-2 text-sm mx-1">
+                      {employee.task.name} | {employee.task.hours} hours
+                      </span> )}
+                  </div>
+                ))
+              }
             </div>
         </div>
     )

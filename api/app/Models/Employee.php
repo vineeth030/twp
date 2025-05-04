@@ -11,6 +11,15 @@ class Employee extends Model
     /** @use HasFactory<\Database\Factories\EmployeeFactory> */
     use HasFactory;
 
+    /**
+     * The attributes that are mass assignable.
+     *
+     * @var list<string>
+     */
+    protected $fillable = [
+        'name'
+    ];
+
     public function task(): HasOne
     {
         return $this->hasOne(Task::class, 'assigned_to');

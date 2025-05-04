@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\EmployeeController;
 use App\Http\Controllers\TaskController;
 use App\Models\Employee;
 use App\Models\User;
@@ -10,6 +11,7 @@ Route::get('/users', function () {
     return User::all();
 });
 
+Route::post('/employees', [EmployeeController::class, 'store']);
 Route::get('/employees', function () {
     return response()->json(['employees' => Employee::with(['task'])->get()]);
 });

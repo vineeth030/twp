@@ -16,8 +16,8 @@ export default function EmployeeListing({ employees }) {
                 </thead>
                 <tbody>
                     { 
-                        employees.map((employee) => (
-                            <tr className="border-b">
+                        employees.map((employee, key) => (
+                            <tr id={key} className="border-b">
                         <td>{employee.name}</td>
                         <td>-</td>
                         <td>-</td>

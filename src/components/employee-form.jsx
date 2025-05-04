@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from "react"
 
-export default function EmployeeForm({ employees }) {
+export default function EmployeeForm({ employees, setEmployees }) {
   const [name, setName] = useState("")
   const [email, setEmail] = useState("")
   const [designation, setDesignation] = useState("")
@@ -11,9 +11,37 @@ export default function EmployeeForm({ employees }) {
     e.preventDefault();
 
     const newEmployeeData = {
-      name: taskName,
-      email: parseFloat(hours),
+      name: name
     };
+
+    try {
+      const response = await fetch('http://localhost:8000/api/employees', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          // You might need to include an authorization token here
+          // 'Authorization': `Bearer ${localStorage.getItem('authToken')}`,
+        },
+        body: JSON.stringify(newEmployeeData),
+      });
+
+      if (response.ok) {
+        const newEmployee = await response.json(); // Assuming your API returns the newly created task
+        console.log('Employee created:', newEmployee);
+        setEmployees([...employees, newEmployee.employee]);
+        //setTasks([...tasks, newTask]); // Update the local tasks state
+        //fetchEmployees();
+        setName('');
+        setEmail('');
+      } else {
+        const errorData = await response.json();
+        console.error('Error creating task:', errorData);
+        // Handle the error, display a message to the user, etc.
+      }
+    } catch (error) {
+      console.error('Network error:', error);
+      // Handle network errors
+    }
 
     console.log('Add new employee');
   }
