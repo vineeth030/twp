@@ -1,9 +1,11 @@
 import './App.css'
 import TaskForm from '@/components/task-form'
-import TaskListing from '@/components/tesk-listing'
+import TaskListing from '@/components/task-listing'
 import { useState, useEffect } from 'react'
 import EmployeeForm from './components/employee-form'
 import EmployeeListing from './components/employee-listing'
+
+const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
 
 function App() {
 
@@ -15,7 +17,7 @@ function App() {
   }, [])
 
   const fetchEmployees = () => {
-      fetch('http://localhost:8000/api/employees')
+      fetch(`${API_BASE_URL}/api/employees`)
         .then((res) => { console.log('Fetching employees...'); return res.json(); })
         .then((data) => setEmployees(data.employees))
         .catch((err) => console.error(err));

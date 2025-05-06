@@ -2,6 +2,8 @@
 
 import { useState, useEffect } from "react"
 
+const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
+
 export default function TaskForm({ employees, fetchEmployees}) {
   const [taskName, setTaskName] = useState("")
   //const [tasks, setTasks] = useState([])
@@ -27,7 +29,7 @@ export default function TaskForm({ employees, fetchEmployees}) {
     };
 
     try {
-      const response = await fetch('http://localhost:8000/api/tasks', {
+      const response = await fetch(`${API_BASE_URL}/api/tasks`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

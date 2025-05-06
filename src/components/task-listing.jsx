@@ -1,10 +1,11 @@
 import { useState, useEffect } from "react"
+const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
 
 export default function TaskListing({ employees, fetchEmployees }) {
     const [tasks, setTasks] = useState([]) 
 
     useEffect(() => {
-        fetch('http://localhost:8000/api/tasks')
+        fetch(`${API_BASE_URL}/api/tasks`)
           .then((res) => res.json())
           .then((data) => setTasks(data.tasks))
           .catch((err) => console.error(err));
@@ -30,7 +31,7 @@ export default function TaskListing({ employees, fetchEmployees }) {
         };
 
         try {
-            const response = await fetch('http://localhost:8000/api/tasks/reassign', {
+            const response = await fetch(`${API_BASE_URL}/api/tasks/reassign`, {
               method: 'POST',
               headers: {
                 'Content-Type': 'application/json',
