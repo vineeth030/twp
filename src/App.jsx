@@ -4,6 +4,9 @@ import TaskListing from '@/components/task-listing'
 import { useState, useEffect } from 'react'
 import EmployeeForm from './components/employee-form'
 import EmployeeListing from './components/employee-listing'
+import TaskScheduler from './components/task-scheduler'
+import Scheduler from './components/scheduler'
+
 
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
 
@@ -40,8 +43,10 @@ function App() {
 
 {!showEmployees && (
           <>
-            <TaskForm employees={employees} setEmployees={setEmployees} fetchEmployees={fetchEmployees}/>
-            <TaskListing employees={employees} fetchEmployees={fetchEmployees}/>
+            {/* <TaskForm employees={employees} setEmployees={setEmployees} fetchEmployees={fetchEmployees}/>
+            <TaskListing employees={employees} fetchEmployees={fetchEmployees}/> */
+            <TaskScheduler />
+            }
           </>
         )}
         
