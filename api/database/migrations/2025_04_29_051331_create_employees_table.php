@@ -14,6 +14,9 @@ return new class extends Migration
         Schema::create('employees', function (Blueprint $table) {
             $table->id();
             $table->string('name');
+            $table->string('designation');
+            $table->string('group_id')->default(1);
+            $table->string('color');
             $table->timestamps();
         });
     }

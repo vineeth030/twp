@@ -2,6 +2,7 @@
 
 namespace Database\Factories;
 
+use Illuminate\Support\Arr;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
@@ -9,6 +10,8 @@ use Illuminate\Database\Eloquent\Factories\Factory;
  */
 class EmployeeFactory extends Factory
 {
+    private $designations = ['Software Engineer', 'Designer', 'Tester'];
+    private $colors = ['#bbdc00', '#9e5fff', '#dc4900', '#03c2fc', '#232936', '#eb03fc'];
     /**
      * Define the model's default state.
      *
@@ -17,7 +20,9 @@ class EmployeeFactory extends Factory
     public function definition(): array
     {
         return [
-            'name' => fake()->name()
+            'name' => fake()->name(),
+            'designation' => Arr::random($this->designations),
+            'color' => Arr::random($this->colors)
         ];
     }
 }

@@ -35,7 +35,16 @@ class TaskController extends Controller
 
     public function index()
     {
-        $tasks = Task::all();
+        $tasks = Task::all()->map(function ($task) {
+            return [
+                'id' => $task->id,
+                'name' => $task->name, // or 'Subject' if you're using legacy keys
+                'start_time' => $task->start_time ? $task->start_time->toIso8601String() : null,
+                'end_time' => $task->end_time ? $task->end_time->toIso8601String() : null,
+                'is_all_day' => $task->is_all_day,
+                'EmployeeId' => $task->employee_id,
+            ];
+        });
 
         return response()->json(['tasks' => $tasks]);
     }

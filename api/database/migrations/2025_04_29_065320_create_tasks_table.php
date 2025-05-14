@@ -14,10 +14,10 @@ return new class extends Migration
         Schema::create('tasks', function (Blueprint $table) {
             $table->id();
             $table->string('name');
-            $table->float('hours');
-            $table->dateTime('start_at')->nullable();
-            $table->dateTime('end_at')->nullable();
-            $table->integer('assigned_to');
+            $table->dateTime('start_at');
+            $table->dateTime('end_at');
+            $table->integer('employee_id');
+            $table->boolean('is_all_day')->default(false);
             $table->timestamps();
         });
     }

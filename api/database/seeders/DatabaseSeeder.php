@@ -3,6 +3,7 @@
 namespace Database\Seeders;
 
 use App\Models\Employee;
+use App\Models\Task;
 use App\Models\User;
 // use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
@@ -21,6 +22,8 @@ class DatabaseSeeder extends Seeder
             'email' => 'admin@one.com',
         ]);
 
-        Employee::factory(4)->create();
+        Employee::factory(5)->create();
+
+        Task::factory(6)->create();
     }
 }

@@ -5,7 +5,6 @@ import { useState, useEffect } from 'react'
 import EmployeeForm from './components/employee-form'
 import EmployeeListing from './components/employee-listing'
 import TaskScheduler from './components/task-scheduler'
-import Scheduler from './components/scheduler'
 
 
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
