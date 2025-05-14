@@ -10,7 +10,7 @@ export default function TaskListing({ employees, fetchEmployees }) {
           .then((data) => setTasks(data.tasks))
           .catch((err) => console.error(err));
 
-      }, []);
+    }, []);
 
     const handleOnClick = () => {
       alert('on click');

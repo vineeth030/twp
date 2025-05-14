@@ -20,4 +20,9 @@ class Task extends Model
         'hours',
         'assigned_to',
     ];
+
+    protected $casts = [
+        'start_at' => 'datetime',
+        'end_at' => 'datetime'
+    ];
 }

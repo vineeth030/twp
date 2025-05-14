@@ -22,6 +22,6 @@ class Employee extends Model
 
     public function task(): HasOne
     {
-        return $this->hasOne(Task::class, 'assigned_to');
+        return $this->hasOne(Task::class, 'employee_id');
     }
 }

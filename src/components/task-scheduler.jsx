@@ -7,52 +7,14 @@ import { extend } from '@syncfusion/ej2-base';
 
 import { registerLicense } from '@syncfusion/ej2-base';
 
+const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
+
 registerLicense('Ngo9BigBOggjHTQxAR8/V1NNaF5cXmBCe0x3Qnxbf1x1ZFdMY1xbRHNPMyBoS35Rc0VmWH9ecndVRmVUVEBxVEBU')
 
-export default function TaskScheduler(params) {
-    const tasks = [
-        {
-            "id": 9,
-            "name": "Client Meeting",
-            "start_at": "2025-05-11T02:30:00.000Z",
-            "end_at": "2025-05-11T05:00:00.000Z",
-            "is_all_day": false,
-            "employee_id": 3
-        },
-        {
-            "id": 14,
-            "name": "Meeting",
-            "start_at": "2025-05-11T03:30:00.000Z",
-            "end_at": "2025-05-11T05:30:00.000Z",
-            "is_all_day": false,
-            "employee_id": 1
-        },
-        {
-            "id": 15,
-            "name": "Quality Analysis",
-            "start_at": "2025-05-11T03:30:00.000Z",
-            "end_at": "2025-05-11T04:30:00.000Z",
-            "is_all_day": false,
-            "employee_id": 2
-        },
-        {
-            "id": 16,
-            "name": "Partners Meeting",
-            "start_at": "2025-05-11T05:30:00.000Z",
-            "end_at": "2025-05-11T07:30:00.000Z",
-            "is_all_day": false,
-            "employee_id": 4
-        }
-    ];
+export default function TaskScheduler({ employees, tasks }) {
+
     const data = extend([], tasks, null, true);
-    const employeeData = [
-        { name: 'Alice', id: 1, group_id: 1, color: '#bbdc00', designation: 'Content writer' },
-        { name: 'Nancy', id: 2, group_id: 1, color: '#9e5fff', designation: 'Designer' },
-        { name: 'Robert', id: 3, group_id: 1, color: '#bbdc00', designation: 'Software Engineer' },
-        { name: 'Robson', id: 4, group_id: 1, color: '#9e5fff', designation: 'Support Engineer' },
-        { name: 'Laura', id: 5, group_id: 1, color: '#bbdc00', designation: 'Human Resource' },
-        { name: 'Margaret', id: 6, group_id: 1, color: '#9e5fff', designation: 'Content Analyst' }
-    ];
+
     const getEmployeeName = (value) => {
         return value.resourceData[value.resource.textField];
     };
@@ -67,6 +29,53 @@ export default function TaskScheduler(params) {
                 </div>
             </div>);
     };
+    const handleActionBegin = async ( args ) => {
+        console.log('Event type:', args.requestType);
+        console.log('Event data:', args.data);
+        if (args.requestType === 'eventRemove') {
+            deleteTask(args.data);
+        }
+
+        if (args.requestType === 'eventChange') {
+            updateTask(args.data);
+        }
+    }
+
+    const deleteTask = async (data) => {
+
+        const deletedTask = data; // can be an array or object
+        const taskId = Array.isArray(deletedTask) ? deletedTask[0].id : deletedTask.id;
+    
+        try {
+            await fetch(`${API_BASE_URL}/api/tasks/${taskId}`, {
+            method: 'DELETE',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            });
+            console.log('Task deleted successfully');
+        } catch (error) {
+            console.error('Failed to delete task:', error);
+        }
+
+    }
+
+    const updateTask = async (task) => {
+        try {
+            await fetch(`${API_BASE_URL}/api/tasks`, {
+                method: 'PATCH',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(task)
+            });
+            console.log('Task deleted successfully');
+        } catch (error) {
+            console.error('Failed to delete task:', error);
+        }
+
+    }
+
     return (<div className='schedule-control-section'>
         <div className='col-lg-12 control-section'>
             <div className='control-wrapper drag-sample-wrapper'>
@@ -81,10 +90,11 @@ export default function TaskScheduler(params) {
                             startTime: { name: 'start_at' },
                             endTime: { name: 'end_at' },
                             isAllDay: { name: 'is_all_day' }
-                        } }} 
+                        }}} 
+                        actionBegin={handleActionBegin}
                         group={{ enableCompactView: false, resources: ['Employee'] }}>
                         <ResourcesDirective>
-                            <ResourceDirective field='employee_id' title='Employees' name='Employee' allowMultiple={true} dataSource={employeeData} textField='name' idField='id' colorField='Color'/>
+                            <ResourceDirective field='employee_id' title='Employees' name='Employee' allowMultiple={true} dataSource={employees} textField='name' idField='id' colorField='Color'/>
                         </ResourcesDirective>
                         <ViewsDirective>
                             <ViewDirective option='Day'/>

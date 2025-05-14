@@ -18,6 +18,8 @@ Route::get('/employees', function () {
 
 Route::post('/tasks', [TaskController::class, 'store']);
 Route::post('/tasks/reassign', [TaskController::class, 'reassign']);
+Route::delete('/tasks/{id}', [TaskController::class, 'destroy']);
+Route::patch('/tasks', [TaskController::class, 'update']);
 Route::get('/tasks', [TaskController::class, 'index']);
 
 Route::get('/user', function (Request $request) {

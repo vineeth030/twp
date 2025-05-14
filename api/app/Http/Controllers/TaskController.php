@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Task;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 
@@ -39,10 +40,10 @@ class TaskController extends Controller
             return [
                 'id' => $task->id,
                 'name' => $task->name, // or 'Subject' if you're using legacy keys
-                'start_time' => $task->start_time ? $task->start_time->toIso8601String() : null,
-                'end_time' => $task->end_time ? $task->end_time->toIso8601String() : null,
+                'start_at' => $task->start_at ? $task->start_at->toIso8601String() : null,
+                'end_at' => $task->end_at ? $task->end_at->toIso8601String() : null,
                 'is_all_day' => $task->is_all_day,
-                'EmployeeId' => $task->employee_id,
+                'employee_id' => $task->employee_id,
             ];
         });
 
@@ -58,5 +59,32 @@ class TaskController extends Controller
         ]);
 
         return response()->json(['message' => 'Task updated successfully'], 200);
+    }
+
+    public function update(Request $request)
+    {
+        Log::info('Data: ', [$request->all()]);
+        
+        $task = Task::findOrFail($request->input('id'));
+
+        $task->update($request->all());
+
+        return response()->json(['message' => 'Task updated successfully']);
+    }
+
+
+    public function destroy($id)
+    {
+        Log::info('Task ID: ', [$id]);
+
+        $task = Task::find($id);
+
+        if (!$task) {
+            return response()->json(['message' => 'Task not found'], 404);
+        }
+
+        $task->delete();
+
+        return response()->json(['message' => 'Task deleted successfully']);
     }
 }
