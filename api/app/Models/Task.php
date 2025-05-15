@@ -17,8 +17,10 @@ class Task extends Model
      */
     protected $fillable = [
         'name',
-        'hours',
-        'assigned_to',
+        'start_at',
+        'end_at',
+        'employee_id',
+        'is_all_day'
     ];
 
     protected $casts = [

@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { useEffect } from 'react';
+import { useEffect, useRef } from 'react';
 import { ScheduleComponent, ViewsDirective, ViewDirective, TimelineViews, Inject, ResourcesDirective, ResourceDirective, Resize, DragAndDrop, TimelineMonth, Day } from '@syncfusion/ej2-react-schedule';
 import './timeline-resources.css';
 import * as dataSource from './datasource.json';
@@ -12,6 +12,7 @@ const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
 registerLicense('Ngo9BigBOggjHTQxAR8/V1NNaF5cXmBCe0x3Qnxbf1x1ZFdMY1xbRHNPMyBoS35Rc0VmWH9ecndVRmVUVEBxVEBU')
 
 export default function TaskScheduler({ employees, tasks }) {
+    const scheduleObj = useRef(null);
 
     const data = extend([], tasks, null, true);
 
@@ -38,6 +39,10 @@ export default function TaskScheduler({ employees, tasks }) {
 
         if (args.requestType === 'eventChange') {
             updateTask(args.data);
+        }
+        
+        if (args.requestType === 'eventCreate') {
+            createTask(args.data[0]);
         }
     }
 
@@ -76,12 +81,58 @@ export default function TaskScheduler({ employees, tasks }) {
 
     }
 
+    const createTask = async (task) => {
+        try {
+            await fetch(`${API_BASE_URL}/api/tasks`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(task)
+            });
+            console.log('Task deleted successfully');
+        } catch (error) {
+            console.error('Failed to delete task:', error);
+        }
+    }
+
+    const getEventData = () => {
+        const date = scheduleObj.current.selectedDate;
+        return {
+            Id: scheduleObj.current.getEventMaxID(),
+            Subject: '',
+            StartTime: new Date(date.getFullYear(), date.getMonth(), date.getDate(), new Date().getHours(), 0, 0),
+            EndTime: new Date(date.getFullYear(), date.getMonth(), date.getDate(), new Date().getHours() + 1, 0, 0),
+            Location: '',
+            Description: '',
+            IsAllDay: false,
+            CalendarId: 1
+        };
+    };
+
+    const handleOnAddTask = () => {
+        console.log('handleOnAddTask');
+        const date = scheduleObj.current.selectedDate;
+
+        const cellData = {
+            Id: scheduleObj.current.getEventMaxID(),
+            Subject: '',
+            StartTime: new Date(date.getFullYear(), date.getMonth(), date.getDate(), new Date().getHours(), 0, 0),
+            EndTime: new Date(date.getFullYear(), date.getMonth(), date.getDate(), new Date().getHours() + 1, 0, 0),
+            IsAllDay: false
+          };
+      
+        scheduleObj.current.openEditor(cellData, 'Add');
+    }
+
     return (<div className='schedule-control-section'>
+        <button id="addEventBtn" className='text-white' onClick={handleOnAddTask}>Add Task</button>
         <div className='col-lg-12 control-section'>
             <div className='control-wrapper drag-sample-wrapper'>
                 <div className="schedule-container">
                     <ScheduleComponent cssClass='block-events' width='100%' height='650px' startHour='08:00' endHour='20:00' 
-                        selectedDate={new Date(2025, 4, 11)} 
+                        selectedDate={new Date(2025, 4, 11)}
+                        ref={scheduleObj} 
                         currentView='TimelineDay' 
                         resourceHeaderTemplate={resourceHeaderTemplate} 
                         eventSettings={{ dataSource: data, fields: {

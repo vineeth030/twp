@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Task;
+use Carbon\Carbon;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
@@ -13,10 +14,9 @@ class TaskController extends Controller
     {
         $validator = Validator::make($request->all(), [
             'name' => 'required|string|max:255',
-            'hours' => 'required|numeric|min:0',
             'start_at' => 'nullable|date|before:end_at',
             'end_at' => 'nullable|date|after:start_at',
-            'assigned_to' => 'nullable|exists:employees,id', // Assuming you have a 'users' table
+            'employee_id' => 'nullable|exists:employees,id', // Assuming you have a 'users' table
         ]);
 
         if ($validator->fails()) {
@@ -25,10 +25,9 @@ class TaskController extends Controller
 
         $task = Task::create([
             'name' => $request->input('name'),
-            'hours' => $request->input('hours'),
-            'start_at' => $request->input('start_at'),
-            'end_at' => $request->input('end_at'),
-            'assigned_to' => $request->input('assigned_to'),
+            'start_at' => Carbon::parse($request->input('start_at')),
+            'end_at' => Carbon::parse($request->input('end_at')),
+            'employee_id' => $request->input('employee_id'),
         ]);
 
         return response()->json(['message' => 'Task created successfully', 'task' => $task], 201);
@@ -67,7 +66,21 @@ class TaskController extends Controller
         
         $task = Task::findOrFail($request->input('id'));
 
-        $task->update($request->all());
+        Log::info('Update Data: ', [
+        'name' => $request->input('name'),
+        'start_at' => Carbon::parse($request->input('start_at')),
+        'end_at' => Carbon::parse($request->input('end_at')),
+        'employee_id' => $request->input('employee_id'),
+        'is_all_day' => false
+    ]);
+
+        $task->update([
+            'name' => $request->input('name'),
+            'start_at' => Carbon::parse($request->input('start_at')),
+            'end_at' => Carbon::parse($request->input('end_at')),
+            'employee_id' => $request->input('employee_id'),
+            'is_all_day' => false
+        ]);
 
         return response()->json(['message' => 'Task updated successfully']);
     }
