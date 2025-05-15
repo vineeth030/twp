@@ -2,7 +2,6 @@ import * as React from 'react';
 import { useEffect, useRef } from 'react';
 import { ScheduleComponent, ViewsDirective, ViewDirective, TimelineViews, Inject, ResourcesDirective, ResourceDirective, Resize, DragAndDrop, TimelineMonth, Day } from '@syncfusion/ej2-react-schedule';
 import './timeline-resources.css';
-import * as dataSource from './datasource.json';
 import { extend } from '@syncfusion/ej2-base';
 
 import { registerLicense } from '@syncfusion/ej2-base';
@@ -126,7 +125,9 @@ export default function TaskScheduler({ employees, tasks }) {
     }
 
     return (<div className='schedule-control-section'>
-        <button id="addEventBtn" className='text-white' onClick={handleOnAddTask}>Add Task</button>
+        <div className='flex justify-end'>
+            <button id="addEventBtn" className='text-white' onClick={handleOnAddTask}>Add Task</button>
+        </div>
         <div className='col-lg-12 control-section'>
             <div className='control-wrapper drag-sample-wrapper'>
                 <div className="schedule-container">
