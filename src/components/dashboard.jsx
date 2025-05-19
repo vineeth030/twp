@@ -20,14 +20,16 @@ export default function Dashboard() {
     }, []);
 
     const fetchEmployees = () => {
-        fetch(`${API_BASE_URL}/api/employees`)
+        const token = localStorage.getItem('token');
+
+        fetch(`${API_BASE_URL}/api/employees`, {headers:{'Accept': 'application/json','Authorization': `Bearer ${token}`}})
           .then((res) => { console.log('Fetching employees...'); return res.json(); })
           .then((data) => setEmployees(data.employees))
           .catch((err) => console.error(err));
     }
   
     const fetchTasks = () => {
-        fetch(`${API_BASE_URL}/api/tasks`)
+        fetch(`${API_BASE_URL}/api/tasks`, {headers:{'Accept': 'application/json', 'Authorization': `Bearer ${token}`}})
           .then((res) => res.json())
           .then((data) => setTasks(data.tasks))
           .catch((err) => console.error(err));
