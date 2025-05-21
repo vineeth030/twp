@@ -8,7 +8,7 @@ import { registerLicense } from '@syncfusion/ej2-base';
 
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
 
-registerLicense('Ngo9BigBOggjHTQxAR8/V1NNaF5cXmBCe0x3Qnxbf1x1ZFdMY1xbRHNPMyBoS35Rc0VmWH9ecndVRmVUVEBxVEBU')
+registerLicense('ORg4AjUWIQA/Gnt2XFhhQlJHfV5AQmBIYVp/TGpJfl96cVxMZVVBJAtUQF1hTH5WdEVjUHpZcXZRR2lbWkZ/')
 
 export default function TaskScheduler({ employees, tasks }) {
     const scheduleObj = useRef(null);

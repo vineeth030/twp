@@ -1,10 +1,12 @@
 // src/auth/useAuth.js
-import { useState, useEffect } from "react";
+import { useState, useEffect, useContext } from "react";
+import { AuthContext } from "./AuthContext";
 
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
 
 export default function useAuth() {
-  const [user, setUser] = useState(null);
+  const {user, setUser} = useContext(AuthContext);
+  const {loading, setLoading} = useContext(AuthContext);
 
   const token = localStorage.getItem("token");
 
@@ -38,26 +40,6 @@ export default function useAuth() {
     localStorage.removeItem("token");
     setUser(null);
   };
-
-  const getUser = async () => {
-    if (!token) return;
-
-    const res = await fetch(`${API_BASE_URL}/api/user`, {
-      headers: { Authorization: `Bearer ${token}` },
-    });
-
-    if (res.ok) {
-      const data = await res.json();
-      setUser(data);
-    } else {
-      localStorage.removeItem("token");
-      setUser(null);
-    }
-  };
-
-  useEffect(() => {
-    getUser();
-  }, []);
 
   return { user, login, logout };
 }

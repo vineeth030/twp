@@ -1,6 +1,7 @@
 // src/pages/Login.jsx
-import { useState } from "react";
+import { useContext, useState } from "react";
 import useAuth from "../components/auth/useAuth";
+import { AuthContext } from "./auth/AuthContext";
 
 export default function Login({ onLoginSuccess }) {
   const { login } = useAuth();
@@ -11,7 +12,7 @@ export default function Login({ onLoginSuccess }) {
     e.preventDefault();
     const success = await login(email, password);
     if (success) {
-      onLoginSuccess();
+      //setUser(data);
     }
   };
 
