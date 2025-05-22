@@ -48,15 +48,19 @@ export default function Dashboard() {
 
     return (
         <>
-            <div className='flex justify-end mr-8'>
-            <button className='text-white' onClick={() => handleLogout()} >Logout</button>
-            { !showEmployees && ( 
-                <button className='text-white' onClick={() => setShowEmployees(prev => !prev)} >Manage Employees</button>
-                )}
-            { showEmployees && ( <button className='text-white' onClick={() => setShowEmployees(prev => !prev)} >Home</button> )}
+            <div className='flex justify-between items-center mr-8'>
+                <div>
+                <h2 className="text-2xl font-bold mb-6 pl-9">Task Manager</h2>
+                </div>
+                <div className="flex gap-4">
+                { !showEmployees && ( 
+                    <button className='text-white' onClick={() => setShowEmployees(prev => !prev)} >Manage Employees</button>
+                    )}
+                { showEmployees && ( <button className='text-white' onClick={() => setShowEmployees(prev => !prev)} >Home</button> )}
+                <button className='text-white' onClick={() => handleLogout()} >Logout</button>
+                </div>
             </div>
-            <main className="container mx-auto p-4 md:p-8">
-            <h2 className="text-2xl font-bold mb-6">Task Manager</h2>
+            <main className="container mx-auto p-4 md:p-8 min-h-[700px]">
             {showEmployees && (
                 <>
                 <EmployeeForm employees={employees} setEmployees={setEmployees} />

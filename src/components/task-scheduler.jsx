@@ -126,7 +126,7 @@ export default function TaskScheduler({ employees, tasks }) {
 
     return (<div className='schedule-control-section'>
         <div className='flex justify-end'>
-            <button id="addEventBtn" className='text-white' onClick={handleOnAddTask}>Add Task</button>
+            <button id="addEventBtn" className='text-white mb-1' onClick={handleOnAddTask}>Add Task</button>
         </div>
         <div className='col-lg-12 control-section'>
             <div className='control-wrapper drag-sample-wrapper'>
