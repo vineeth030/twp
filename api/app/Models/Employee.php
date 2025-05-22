@@ -17,7 +17,10 @@ class Employee extends Model
      * @var list<string>
      */
     protected $fillable = [
-        'name'
+        'name',
+        'email',
+        'designation',
+        'companyid'
     ];
 
     public function task(): HasOne

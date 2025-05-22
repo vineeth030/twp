@@ -3,6 +3,7 @@
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\EmployeeController;
 use App\Http\Controllers\TaskController;
+use App\Models\Company;
 use App\Models\Employee;
 use App\Models\User;
 use Illuminate\Http\Request;
@@ -20,9 +21,9 @@ Route::middleware('auth:sanctum')->group(function () {
     });
 
     Route::post('/employees', [EmployeeController::class, 'store']);
-    Route::get('/employees', function () {
-        return response()->json(['employees' => Employee::with(['task'])->get()]);
-    });
+    Route::delete('/employees/{id}', [EmployeeController::class, 'destroy']);
+    Route::get('/employees', [EmployeeController::class, 'index']);
+    Route::patch('/employees', [EmployeeController::class, 'update']);
 
     Route::post('/tasks', [TaskController::class, 'store']);
     Route::post('/tasks/reassign', [TaskController::class, 'reassign']);

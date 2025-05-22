@@ -60,7 +60,7 @@ export default function Dashboard() {
             {showEmployees && (
                 <>
                 <EmployeeForm employees={employees} setEmployees={setEmployees} />
-                <EmployeeListing employees={employees} />
+                <EmployeeListing employees={employees} setEmployees={setEmployees} />
                 </>
             )}
 

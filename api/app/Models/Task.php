@@ -20,6 +20,7 @@ class Task extends Model
         'start_at',
         'end_at',
         'employee_id',
+        'company_id',
         'is_all_day'
     ];
 

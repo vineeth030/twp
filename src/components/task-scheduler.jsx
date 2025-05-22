@@ -53,9 +53,9 @@ export default function TaskScheduler({ employees, tasks }) {
         try {
             await fetch(`${API_BASE_URL}/api/tasks/${taskId}`, {
             method: 'DELETE',
-            headers: {
-                'Content-Type': 'application/json',
-            },
+                headers: {
+                    'Content-Type': 'application/json',
+                },
             });
             console.log('Task deleted successfully');
         } catch (error) {

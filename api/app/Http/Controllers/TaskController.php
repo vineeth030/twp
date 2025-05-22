@@ -6,6 +6,7 @@ use App\Models\Task;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Validator;
 
 class TaskController extends Controller
@@ -35,7 +36,7 @@ class TaskController extends Controller
 
     public function index()
     {
-        $tasks = Task::all()->map(function ($task) {
+        $tasks = Task::where('company_id', Auth::user()->company_id)->get()->map(function ($task) {
             return [
                 'id' => $task->id,
                 'name' => $task->name, // or 'Subject' if you're using legacy keys
