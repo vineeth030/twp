@@ -4,12 +4,15 @@ namespace App\Http\Controllers;
 
 use App\Models\Employee;
 use Illuminate\Http\Request;
+use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Validator;
 
 class EmployeeController extends Controller
 {
+    private $colors = ['#bbdc00', '#9e5fff', '#dc4900', '#03c2fc', '#232936', '#eb03fc'];
+
     public function store(Request $request)
     {
         $validator = Validator::make($request->all(), [
@@ -21,17 +24,21 @@ class EmployeeController extends Controller
         }
 
         $employee = Employee::create([
-            'name' => $request->input('name')
+            'name' => $request->input('name'),
+            'email' => $request->input('email'),
+            'designation' => $request->input('designation'),
+            'company_id' => Auth::user()->company_id,
+            'color' => Arr::random($this->colors)
         ]);
 
         return response()->json(['message' => 'Employee created successfully', 'employee' => $employee], 201);
     }
 
-    public function update(Request $request)
+    public function update(Request $request, $id)
     {
         Log::info('Data: ', [$request->all()]);
         
-        $employee = Employee::findOrFail($request->input('id'));
+        $employee = Employee::findOrFail($id);
 
         $employee->update([
             'name' => $request->input('name'),

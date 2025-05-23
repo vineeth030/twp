@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react"
 import ConfirmDeleteModal from "./ui/confirm-delete-modal"
 import EmployeeEditFormModal from "./employee-edit-form";
+import EmployeeAddFormModal from "./employee-add-form";
 
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
 
@@ -8,6 +9,7 @@ export default function EmployeeListing({ employees, setEmployees }) {
     const [tasks, setTasks] = useState([]) 
     const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
     const [isEditModalOpen, setIsEditModalOpen] = useState(false);
+    const [isAddModalOpen, setIsAddModalOpen] = useState(false);
     const [selectedEmployee, setSelectedEmployee] = useState(null);
     const [employeeName, setEmployeeName] = useState("")
     const [employeeEmail, setEmployeeEmail] = useState("")
@@ -21,38 +23,101 @@ export default function EmployeeListing({ employees, setEmployees }) {
         setIsEditModalOpen(true)
     }
 
+    const handleAddButtonClick = () => {
+        setIsAddModalOpen(true)
+    }
+
     const handleDeleteButtonClick = (employee) => {
         console.log('Employee: ', employee)
         setSelectedEmployee(employee);
         setIsDeleteModalOpen(true);
     }
 
-    const handleSubmit = async () => {
+    const handleAddFormSubmit = async () => {
         console.log('Employee edit form submit : ', { employeeName, employeeEmail, employeeDesignation });
+
+        if (!employeeName || !employeeEmail || !employeeDesignation) {
+            console.error('All fields are required');
+            return;
+        }
 
         const token = localStorage.getItem('token');
 
-        try {
-            await fetch(`${API_BASE_URL}/api/employees`, {
-                method: 'PATCH',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'Authorization': `Bearer ${token}`
-                },
-                body: JSON.stringify({
-                    'name': employeeName,
-                    'email': employeeEmail,
-                    'designation' : employeeDesignation
-                })
-            });
-            console.log('Employee deleted successfully');
-            setEmployees((prev) =>
-                prev.filter((emp) => emp.id !== selectedEmployee.id)
-            );
+        console.log('Data: ', {
+            'name': employeeName,
+            'email': employeeEmail,
+            'designation' : employeeDesignation
+        });
 
-        } catch (error) {
-            console.error('Failed to delete employee:', error);
+        const response = await fetch(`${API_BASE_URL}/api/employees`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${token}`
+            },
+            body: JSON.stringify({
+                'name': employeeName,
+                'email': employeeEmail,
+                'designation' : employeeDesignation
+            })
+        });
+
+        if (!response.ok) {
+            const errorData = await response.json();
+            throw new Error(errorData.message || 'Failed to update employee');
         }
+        
+        const newEmployee = await response.json();
+        console.log('Employee updated successfully');
+
+        setEmployees((prev) => [...prev, newEmployee]);
+
+        setEmployeeName('');
+        setEmployeeEmail('');
+        setEmployeeDesignation('');
+        setIsAddModalOpen(false);
+    }
+
+    const handleSubmit = async () => {
+        console.log('Employee edit form submit : ', { employeeName, employeeEmail, employeeDesignation });
+
+        if (!employeeName || !employeeEmail || !employeeDesignation) {
+            console.error('All fields are required');
+            return;
+        }
+
+        const token = localStorage.getItem('token');
+
+        const response = await fetch(`${API_BASE_URL}/api/employees/${selectedEmployee.id}`, {
+            method: 'PATCH',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${token}`
+            },
+            body: JSON.stringify({
+                'name': employeeName,
+                'email': employeeEmail,
+                'designation' : employeeDesignation
+            })
+        });
+
+        if (!response.ok) {
+            const errorData = await response.json();
+            throw new Error(errorData.message || 'Failed to update employee');
+        }
+        
+        console.log('Employee updated successfully');
+
+        setEmployees((prev) =>
+            prev.map((emp) =>
+                emp.id === selectedEmployee.id
+                  ? { ...emp, name: employeeName, email: employeeEmail, designation: employeeDesignation }
+                  : emp
+            )
+        );
+
+        setSelectedEmployee(null);
+        setIsEditModalOpen(false);
     }
 
     const handleConfirmDelete = async () => {
@@ -83,25 +148,28 @@ export default function EmployeeListing({ employees, setEmployees }) {
       };
 
     return (
-        <div>
-            <table className="table-auto w-full text-left mt-8">
-                <thead>
+        <div class="overflow-x-auto pt-5">
+            <div className="flex justify-end mb-2">
+                <button onClick={ () => handleAddButtonClick() } className="px-3 py-1 text-sm text-white bg-blue-500 rounded hover:bg-blue-600">Add Employee</button>
+            </div>
+            <table className="min-w-full text-sm text-left text-gray-500 border border-gray-200">
+                <thead class="text-xs text-gray-700 uppercase bg-gray-100">
                     <tr className="border-b">
-                    <th>Name</th>
-                    <th>Email</th>
-                    <th>Designation</th>
-                    <th>Action</th>
+                    <th class="px-2 py-3 border-b">Name</th>
+                    <th class="px-2 py-3 border-b">Email</th>
+                    <th class="px-2 py-3 border-b">Designation</th>
+                    <th class="px-2 py-3 border-b">Action</th>
                     </tr>
                 </thead>
                 <tbody>
                     { 
                         employees.map((employee) => (
-                        <tr key={employee.id} className="border-b">
-                            <td>{employee.name}</td>
-                            <td>-</td>
-                            <td>-</td>
-                            <td>
-                                <a onClick={ () => handleEditButtonClick(employee) } className="text-white cursor-pointer">Edit</a> | <a onClick={ () => handleDeleteButtonClick(employee) } className="text-white cursor-pointer">Delete</a></td>
+                        <tr key={employee.id} className="bg-white hover:bg-gray-50">
+                            <td className="px-2 py-2 border-b">{employee.name}</td>
+                            <td className="px-2 py-2 border-b">{employee.email}</td>
+                            <td className="px-2 py-2 border-b">{employee.designation}</td>
+                            <td className="px-2 py-1 border-b">
+                                <button onClick={ () => handleEditButtonClick(employee) } className="px-3 py-1 text-sm text-white bg-blue-500 rounded hover:bg-blue-600">Edit</button> <button onClick={ () => handleDeleteButtonClick(employee) } className="px-3 py-1 text-sm text-white bg-red-500 rounded hover:bg-red-600">Delete</button></td>
                         </tr>
                     ))
                     }
@@ -127,6 +195,19 @@ export default function EmployeeListing({ employees, setEmployees }) {
                 setEmployeeDesignation={setEmployeeDesignation}
                 setSelectedEmployee={setSelectedEmployee}
                 handleSubmit={handleSubmit}
+            />
+
+            <EmployeeAddFormModal
+                isOpen={isAddModalOpen}
+                onClose={() => setIsAddModalOpen(false)}
+                employeeName={employeeName}
+                employeeEmail={employeeEmail}
+                employeeDesignation={employeeDesignation}
+                setEmployeeName={setEmployeeName}
+                setEmployeeEmail={setEmployeeEmail}
+                setEmployeeDesignation={setEmployeeDesignation}
+                setSelectedEmployee={setSelectedEmployee}
+                handleSubmit={handleAddFormSubmit}
             />
         </div>
     )

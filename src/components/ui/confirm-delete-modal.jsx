@@ -11,10 +11,10 @@ const ConfirmDeleteModal = ({ isOpen, onClose, onConfirm, employeeName }) => {
           Are you sure you want to delete <strong>{employeeName}</strong>?
         </p>
 
-        <div className="mt-6 flex justify-end gap-3">
+        <div className="mt-6 flex justify-end gap-1">
           <button
             onClick={onClose}
-            className="px-4 py-2 rounded-lg bg-gray-200 hover:bg-gray-300 text-gray-800"
+            className="px-4 py-2 rounded-lg bg-gray-200 hover:bg-gray-300 text-white"
           >
             Cancel
           </button>

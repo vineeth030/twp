@@ -1,7 +1,6 @@
 import React from "react";
-import { useState } from "react";
 
-const EmployeeEditFormModal = ({ 
+const EmployeeAddFormModal = ({ 
     isOpen, onClose, employeeName, employeeEmail, employeeDesignation, 
     setEmployeeName, setEmployeeEmail, setEmployeeDesignation, handleSubmit
 }) => {
@@ -10,7 +9,7 @@ const EmployeeEditFormModal = ({
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center backdrop-blur-sm backdrop-brightness-75">
       <div className="bg-white p-6 rounded-2xl shadow-xl w-full max-w-md">
-        <h2 className="text-l font-semibold text-gray-800 pb-5">Edit Employee</h2>    
+        <h2 className="text-l font-semibold text-gray-800 pb-5">Add Employee</h2>    
         <div className="grid grid-cols-1 gap-4">
             <div>
                 <input placeholder="Name" value={employeeName} onChange={(e) => setEmployeeName(e.target.value)} required className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" />
@@ -36,4 +35,4 @@ const EmployeeEditFormModal = ({
   );
 };
 
-export default EmployeeEditFormModal;
+export default EmployeeAddFormModal;

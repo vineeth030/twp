@@ -20,7 +20,8 @@ class Employee extends Model
         'name',
         'email',
         'designation',
-        'companyid'
+        'company_id',
+        'color'
     ];
 
     public function task(): HasOne

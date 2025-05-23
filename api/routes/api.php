@@ -23,7 +23,7 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::post('/employees', [EmployeeController::class, 'store']);
     Route::delete('/employees/{id}', [EmployeeController::class, 'destroy']);
     Route::get('/employees', [EmployeeController::class, 'index']);
-    Route::patch('/employees', [EmployeeController::class, 'update']);
+    Route::patch('/employees/{id}', [EmployeeController::class, 'update']);
 
     Route::post('/tasks', [TaskController::class, 'store']);
     Route::post('/tasks/reassign', [TaskController::class, 'reassign']);
@@ -33,6 +33,10 @@ Route::middleware('auth:sanctum')->group(function () {
 });
 
 Route::post('/login', [AuthController::class, 'login']);
+
+Route::get('/test', function(){
+    dd("test");
+});
 
 // Route::get('/user', function (Request $request) {
 //     return $request->user();
