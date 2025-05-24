@@ -67,10 +67,10 @@ export default function EmployeeListing({ employees, setEmployees }) {
             throw new Error(errorData.message || 'Failed to update employee');
         }
         
-        const newEmployee = await response.json();
+        const newEmployeeData = await response.json();
         console.log('Employee updated successfully');
 
-        setEmployees((prev) => [...prev, newEmployee]);
+        setEmployees((prev) => [...prev, newEmployeeData.employee]);
 
         setEmployeeName('');
         setEmployeeEmail('');
