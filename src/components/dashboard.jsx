@@ -68,7 +68,7 @@ export default function Dashboard() {
 
     return (
         <>
-            <div className='flex justify-between items-center mb-10'>
+            <div className='flex w-screen justify-between items-center mb-10 px-9'>
                 <div>
                     <h2 className="text-2xl font-bold">Task Manager</h2>
                 </div>

@@ -29,6 +29,25 @@ export default function useAuth() {
     }
   };
 
+  const register = async (companyName, name, email, password) => {
+    const res = await fetch(`${API_BASE_URL}/api/register`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ companyName, name, email, password }),
+    });
+
+    const data = await res.json();
+
+    if (res.ok) {
+      localStorage.setItem("token", data.token);
+      setUser(data.user);
+      return true;
+    } else {
+      alert(data.message || "Login failed");
+      return false;
+    }
+  };
+
   const logout = async () => {
     await fetch(`${API_BASE_URL}/api/logout`, {
       method: "POST",
@@ -41,5 +60,5 @@ export default function useAuth() {
     setUser(null);
   };
 
-  return { user, login, logout };
+  return { user, register, login, logout };
 }

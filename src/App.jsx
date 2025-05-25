@@ -10,6 +10,7 @@ import EmployeeListing from './components/employee-listing'
 import TaskScheduler from './components/task-scheduler'
 
 import { AuthContext } from './components/auth/AuthContext'
+import SignUp from './components/signup'
 
 
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
@@ -17,10 +18,12 @@ const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
 function App() {
 
   const { user, loading } = useContext(AuthContext);
+  const [ openSignUpForm, setOpenSignUpForm ] = useState(false);
 
   if (loading) return <p>Loading...</p>;
   
-  return user ? <Dashboard /> : <Login />;
+  return user ? <Dashboard /> : 
+    !openSignUpForm ? <Login setOpenSignUpForm={setOpenSignUpForm} /> : <SignUp setOpenSignUpForm={setOpenSignUpForm} />;
 }
 
 export default App
