@@ -19,17 +19,23 @@ export default function TaskScheduler({ employees, tasks }) {
         return value.resourceData[value.resource.textField];
     };
     const getEmployeeDesignation = (value) => {
+        console.log('value.resourceData : ', value.resourceData)
         return value.resourceData.designation;
+    };
+    const getEmployeeHours = (value) => {
+        return value.resourceData.hours;
     };
     const resourceHeaderTemplate = (props) => {
         return (<div className="template-wrap">
                 <div className="employee-category">
                     <div className="employee-name"> {getEmployeeName(props)}</div>
                     <div className="employee-designation">{getEmployeeDesignation(props)}</div>
+                    <div className="employee-hours">{getEmployeeHours(props)}</div>
                 </div>
             </div>);
     };
     const handleActionBegin = async ( args ) => {
+        
         console.log('Event type:', args.requestType);
         console.log('Event data:', args.data);
         if (args.requestType === 'eventRemove') {
@@ -47,6 +53,7 @@ export default function TaskScheduler({ employees, tasks }) {
 
     const deleteTask = async (data) => {
 
+        const token = localStorage.getItem('token');
         const deletedTask = data; // can be an array or object
         const taskId = Array.isArray(deletedTask) ? deletedTask[0].id : deletedTask.id;
     
@@ -55,6 +62,7 @@ export default function TaskScheduler({ employees, tasks }) {
             method: 'DELETE',
                 headers: {
                     'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${token}`
                 },
             });
             console.log('Task deleted successfully');
@@ -65,11 +73,14 @@ export default function TaskScheduler({ employees, tasks }) {
     }
 
     const updateTask = async (task) => {
+        const token = localStorage.getItem('token');
+        console.log('updateTask', task);
         try {
             await fetch(`${API_BASE_URL}/api/tasks`, {
                 method: 'PATCH',
                 headers: {
                     'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${token}`
                 },
                 body: JSON.stringify(task)
             });
@@ -81,11 +92,13 @@ export default function TaskScheduler({ employees, tasks }) {
     }
 
     const createTask = async (task) => {
+        const token = localStorage.getItem('token');
         try {
             await fetch(`${API_BASE_URL}/api/tasks`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${token}`
                 },
                 body: JSON.stringify(task)
             });
@@ -132,7 +145,7 @@ export default function TaskScheduler({ employees, tasks }) {
             <div className='control-wrapper drag-sample-wrapper'>
                 <div className="schedule-container">
                     <ScheduleComponent cssClass='block-events' width='100%' height='650px' startHour='08:00' endHour='20:00' 
-                        selectedDate={new Date(2025, 4, 11)}
+                        selectedDate={new Date()}
                         ref={scheduleObj} 
                         currentView='TimelineDay' 
                         resourceHeaderTemplate={resourceHeaderTemplate} 

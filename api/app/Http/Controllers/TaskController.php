@@ -29,6 +29,7 @@ class TaskController extends Controller
             'start_at' => Carbon::parse($request->input('start_at')),
             'end_at' => Carbon::parse($request->input('end_at')),
             'employee_id' => $request->input('employee_id'),
+            'company_id' => Auth::user()->company_id
         ]);
 
         return response()->json(['message' => 'Task created successfully', 'task' => $task], 201);
