@@ -10,7 +10,6 @@ export default function SignUp({ setOpenSignUpForm }) {
 
     const handleSubmit = async (e) => {
         e.preventDefault();
-        console.log("Registration !!")
         const success = await register(companyName, name, email, password);
         if (success) {
           //setUser(data);
@@ -34,7 +33,7 @@ export default function SignUp({ setOpenSignUpForm }) {
                 onChange={e => setCompanyName(e.target.value)}
                 required
                 className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500"
-                placeholder="name"
+                placeholder="Company Name"
               />
             </div>
             <div>
@@ -49,7 +48,7 @@ export default function SignUp({ setOpenSignUpForm }) {
                 onChange={e => setName(e.target.value)}
                 required
                 className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500"
-                placeholder="name"
+                placeholder="Name"
               />
             </div>
 
