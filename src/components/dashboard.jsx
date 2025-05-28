@@ -84,7 +84,7 @@ export default function Dashboard() {
                     <button className='text-white' onClick={() => handleLogout()} >Logout</button>
                 </div>
             </div>
-            <main className="container mx-auto min-h-[700px]">
+            <main className="container mx-auto min-h-[700px] px-9">
             {showTeamMembers && (
                 <>
                 <TeamMemberListing members={teamMembers} setMembers={setTeamMembers} />

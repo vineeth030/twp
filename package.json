@@ -14,6 +14,8 @@
     "@radix-ui/react-slot": "^1.2.0",
     "@syncfusion/ej2-base": "^29.1.36",
     "@syncfusion/ej2-react-buttons": "^29.1.34",
+    "@syncfusion/ej2-react-calendars": "^29.2.5",
+    "@syncfusion/ej2-react-dropdowns": "^29.2.7",
     "@syncfusion/ej2-react-inputs": "^29.1.39",
     "@syncfusion/ej2-react-schedule": "^29.1.41",
     "@tailwindcss/vite": "^4.1.4",

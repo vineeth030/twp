@@ -3,6 +3,8 @@ import { useEffect, useRef } from 'react';
 import { ScheduleComponent, ViewsDirective, ViewDirective, TimelineViews, Inject, ResourcesDirective, ResourceDirective, Resize, DragAndDrop, TimelineMonth, Day } from '@syncfusion/ej2-react-schedule';
 import './timeline-resources.css';
 import { extend } from '@syncfusion/ej2-base';
+import { DateTimePickerComponent } from '@syncfusion/ej2-react-calendars';
+import { DropDownListComponent } from '@syncfusion/ej2-react-dropdowns';
 
 import { registerLicense } from '@syncfusion/ej2-base';
 
@@ -137,6 +139,52 @@ export default function TaskScheduler({ employees, tasks }) {
         scheduleObj.current.openEditor(cellData, 'Add');
     }
 
+    const editorTemplate = (props) => {
+        return (
+          <div className="custom-event-editor">
+            <div className="form-group">
+              <label>Subject</label>
+              <input
+                className="e-field e-input"
+                type="text"
+                name="name"
+                defaultValue={props.Subject || ''}
+              />
+            </div>
+            <div className="form-group">
+              <label>Start Time</label>
+              <DateTimePickerComponent
+                value={props.StartTime || new Date()}
+                format="dd/MM/yy hh:mm a"
+                name="start_at"
+                className="e-field"
+              />
+            </div>
+            <div className="form-group">
+              <label>End Time</label>
+              <DateTimePickerComponent
+                value={props.EndTime || new Date()}
+                format="dd/MM/yy hh:mm a"
+                name="end_at"
+                className="e-field"
+              />
+            </div>
+            <div className="form-group">
+              <label>Employee</label>
+              <DropDownListComponent
+                dataSource={employees}
+                fields={{ text: 'name', value: 'id' }}
+                value={props.EmployeeId || props.employee_id} // adapt depending on your data
+                name="employee_id" // match the field in your event model
+                className="e-field"
+                placeholder="Select Employee"
+              />
+            </div>
+          </div>
+        );
+      };
+      
+
     return (<div className='schedule-control-section'>
         <div className='flex justify-end'>
             <button id="addEventBtn" className='text-white mb-1' onClick={handleOnAddTask}>Add Task</button>
@@ -144,11 +192,12 @@ export default function TaskScheduler({ employees, tasks }) {
         <div className='col-lg-12 control-section'>
             <div className='control-wrapper drag-sample-wrapper'>
                 <div className="schedule-container">
-                    <ScheduleComponent cssClass='block-events' width='100%' height='650px' startHour='08:00' endHour='20:00' 
+                    <ScheduleComponent cssClass='block-events' width='100%' height='400px' startHour='08:00' endHour='20:00' 
                         selectedDate={new Date()}
                         ref={scheduleObj} 
                         currentView='TimelineDay' 
-                        resourceHeaderTemplate={resourceHeaderTemplate} 
+                        resourceHeaderTemplate={resourceHeaderTemplate}
+                        editorTemplate={editorTemplate}
                         eventSettings={{ dataSource: data, fields: {
                             id: 'id',
                             subject: { name: 'name' },
