@@ -1,12 +1,13 @@
 <?php
 
-use App\Http\Controllers\AuthController;
-use App\Http\Controllers\EmployeeController;
-use App\Http\Controllers\TaskController;
-use App\Http\Controllers\TeamMemberController;
 use App\Models\User;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\AuthController;
+use App\Http\Controllers\TaskController;
+use App\Http\Controllers\ProjectController;
+use App\Http\Controllers\EmployeeController;
+use App\Http\Controllers\TeamMemberController;
 
 Route::middleware('auth:sanctum')->group(function () {
 
@@ -17,6 +18,11 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::get('/user', function() {
         return Auth::user();
     });
+
+    Route::post('/projects', [ProjectController::class, 'store']);
+    Route::delete('/projects/{id}', [ProjectController::class, 'destroy']);
+    Route::get('/projects', [ProjectController::class, 'index']);
+    Route::patch('/projects/{id}', [ProjectController::class, 'update']);
 
     Route::post('/employees', [EmployeeController::class, 'store']);
     Route::delete('/employees/{id}', [EmployeeController::class, 'destroy']);
