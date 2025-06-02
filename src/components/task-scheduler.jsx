@@ -27,6 +27,7 @@ export default function TaskScheduler({ employees, tasks }) {
     const getEmployeeHours = (value) => {
         return value.resourceData.hours;
     };
+
     const resourceHeaderTemplate = (props) => {
         return (<div className="template-wrap">
                 <div className="employee-category">
@@ -36,6 +37,24 @@ export default function TaskScheduler({ employees, tasks }) {
                 </div>
             </div>);
     };
+
+    const dateHeaderTemplate = (props) => {
+        const date = new Date(props.date);
+        const dayName = date.toLocaleString('en-US', { weekday: 'short' }); // Mon, Tue, etc.
+        const dayNumber = date.getDate(); // 1, 2, 3, etc.
+        const isWeekend = date.getDay() === 0 || date.getDay() === 6; // Sunday = 0, Saturday = 6
+        return (
+            <div 
+                className={`custom-date-header text-center ${
+                    isWeekend ? 'weekend-header' : ''
+                }`}
+            >
+                <div>{dayName}</div>
+                <div>{dayNumber}</div>
+            </div>
+        );
+    };
+    
     const handleActionBegin = async ( args ) => {
         
         console.log('Event type:', args.requestType);
@@ -139,6 +158,20 @@ export default function TaskScheduler({ employees, tasks }) {
         scheduleObj.current.openEditor(cellData, 'Add');
     }
 
+    const handleRenderCell = (args) => {
+        console.log('Yay: ', args.elementType);
+        if (args.elementType === 'emptyCells' || args.elementType === 'resourceHeaderCells') {
+            //const cellDate = new Date(args.data.date);
+            //const day = cellDate.getDay();
+            console.log('day: ');
+            // if (day === 0 || day === 6) {
+            //     args.element.classList.add('weekend-disabled');
+            // } else {
+            //     args.element.classList.add('workday-highlight');
+            // }
+        }
+    };
+
     const editorTemplate = (props) => {
         return (
           <div className="custom-event-editor">
@@ -195,9 +228,13 @@ export default function TaskScheduler({ employees, tasks }) {
                     <ScheduleComponent cssClass='block-events' width='100%' height='400px' startHour='08:00' endHour='20:00' 
                         selectedDate={new Date()}
                         ref={scheduleObj} 
-                        currentView='TimelineDay' 
+                        currentView='TimelineMonth'
+                        dateHeaderTemplate={dateHeaderTemplate} 
                         resourceHeaderTemplate={resourceHeaderTemplate}
                         editorTemplate={editorTemplate}
+                        renderCell={handleRenderCell}
+                        workDays={[1, 2, 3, 4, 5]}
+                        rowAutoHeight={true}
                         eventSettings={{ dataSource: data, fields: {
                             id: 'id',
                             subject: { name: 'name' },
@@ -211,11 +248,9 @@ export default function TaskScheduler({ employees, tasks }) {
                             <ResourceDirective field='employee_id' title='Employees' name='Employee' allowMultiple={true} dataSource={employees} textField='name' idField='id' colorField='Color'/>
                         </ResourcesDirective>
                         <ViewsDirective>
-                            <ViewDirective option='Day'/>
-                            <ViewDirective option='TimelineDay'/>
                             <ViewDirective option='TimelineMonth'/>
                         </ViewsDirective>
-                        <Inject services={[Day, TimelineViews, TimelineMonth, Resize, DragAndDrop]}/>
+                        <Inject services={[TimelineMonth, Resize, DragAndDrop]}/>
                     </ScheduleComponent>
                 </div>
             </div>
