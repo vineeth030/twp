@@ -126,7 +126,7 @@ export default function Dashboard() {
             {!showEmployees && !showTeamMembers && !showProjects && (
                 <>
                 {
-                <TaskScheduler employees={employees} tasks={tasks}/>
+                <TaskScheduler employees={employees} tasks={tasks} projects={projects}/>
                 }
                 </>
             )}

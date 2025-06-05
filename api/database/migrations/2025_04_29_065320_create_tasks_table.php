@@ -18,6 +18,7 @@ return new class extends Migration
             $table->dateTime('end_at');
             $table->integer('employee_id');
             $table->integer('company_id');
+            $table->integer('project_id');
             $table->boolean('is_all_day')->default(false);
             $table->timestamps();
         });

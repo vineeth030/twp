@@ -29,7 +29,8 @@ class TaskController extends Controller
             'start_at' => Carbon::parse($request->input('start_at')),
             'end_at' => Carbon::parse($request->input('end_at')),
             'employee_id' => $request->input('employee_id'),
-            'company_id' => Auth::user()->company_id
+            'company_id' => Auth::user()->company_id,
+            'project_id' => $request->input('project_id'),
         ]);
 
         return response()->json(['message' => 'Task created successfully', 'task' => $task], 201);
@@ -45,6 +46,7 @@ class TaskController extends Controller
                 'end_at' => $task->end_at ? $task->end_at->toIso8601String() : null,
                 'is_all_day' => $task->is_all_day,
                 'employee_id' => $task->employee_id,
+                'project_id' => $task->project_id,
             ];
         });
 
@@ -73,7 +75,8 @@ class TaskController extends Controller
         'start_at' => Carbon::parse($request->input('start_at')),
         'end_at' => Carbon::parse($request->input('end_at')),
         'employee_id' => $request->input('employee_id'),
-        'is_all_day' => false
+        'is_all_day' => false,
+        'project_id' => $request->input('project_id'),
     ]);
 
         $task->update([
@@ -81,7 +84,8 @@ class TaskController extends Controller
             'start_at' => Carbon::parse($request->input('start_at')),
             'end_at' => Carbon::parse($request->input('end_at')),
             'employee_id' => $request->input('employee_id'),
-            'is_all_day' => false
+            'is_all_day' => false,
+            'project_id' => $request->input('project_id'),
         ]);
 
         return response()->json(['message' => 'Task updated successfully']);

@@ -4,6 +4,7 @@ namespace Database\Seeders;
 
 use App\Models\Company;
 use App\Models\Employee;
+use App\Models\Project;
 use App\Models\Task;
 use App\Models\User;
 // use Illuminate\Database\Console\Seeds\WithoutModelEvents;
@@ -22,6 +23,20 @@ class DatabaseSeeder extends Seeder
 
         $company = Company::create([
             'name' => 'Cubet'
+        ]);
+
+        $projectOne = Project::create([
+            'name' => "Project One",
+            'budget' => 100000,
+            'estimated_hours' => 100,
+            'company_id' => $company->id
+        ]);
+
+        $projectTwo = Project::create([
+            'name' => "Project Two",
+            'budget' => 300000,
+            'estimated_hours' => 300,
+            'company_id' => $company->id
         ]);
 
         User::factory()->create([
@@ -51,7 +66,8 @@ class DatabaseSeeder extends Seeder
         ]);
 
         Task::factory(6)->create([
-            'company_id' => $company->id
+            'company_id' => $company->id,
+            'project_id' => rand(1,2)
         ]);
     }
 }

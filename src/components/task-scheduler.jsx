@@ -12,7 +12,7 @@ const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
 
 registerLicense('ORg4AjUWIQA/Gnt2XFhhQlJHfV5AQmBIYVp/TGpJfl96cVxMZVVBJAtUQF1hTH5WdEVjUHpZcXZRR2lbWkZ/')
 
-export default function TaskScheduler({ employees, tasks }) {
+export default function TaskScheduler({ employees, tasks, projects }) {
     const scheduleObj = useRef(null);
 
     const data = extend([], tasks, null, true);
@@ -172,9 +172,47 @@ export default function TaskScheduler({ employees, tasks }) {
         }
     };
 
+    const handlePopupOpen = (args) => {
+        if (args.type === 'QuickInfo') {
+          args.cancel = true; // prevent quick popup
+          scheduleObj.current.openEditor(args.data, args.target.classList.contains('e-appointment') ? 'Save' : 'Add');
+        }
+
+        if (args.type === 'Editor') {
+            setTimeout(() => {
+              const dialog = document.querySelector('.e-schedule-dialog .e-dlg-header');
+              if (dialog) {
+                dialog.textContent = args.data.Id ? 'Edit Booking' : 'New Booking';
+              }
+            }, 0);
+          }
+      };
+
+    const EventTemplate = (props) => {
+        return (
+          <div style={{ padding: '4px' }}>
+            <div><strong>{props.Subject}</strong></div>
+            <div>{props.Location}</div>
+            <div>{props.Project}</div> {/* Custom field if added */}
+          </div>
+        );
+    };
+      
+
     const editorTemplate = (props) => {
         return (
           <div className="custom-event-editor">
+            <div className="form-group">
+              <label>Project</label>
+              <DropDownListComponent
+                    dataSource={projects}
+                    fields={{ text: 'name', value: 'id' }}
+                    value={props.ProjectId || props.project_id}
+                    name="project_id"
+                    className="e-field"
+                    placeholder="Select Project"
+                />
+            </div>
             <div className="form-group">
               <label>Subject</label>
               <input
@@ -235,14 +273,16 @@ export default function TaskScheduler({ employees, tasks }) {
                         renderCell={handleRenderCell}
                         workDays={[1, 2, 3, 4, 5]}
                         rowAutoHeight={true}
-                        eventSettings={{ dataSource: data, fields: {
+                        eventSettings={{ dataSource: data, template: EventTemplate, fields: {
                             id: 'id',
                             subject: { name: 'name' },
                             startTime: { name: 'start_at' },
                             endTime: { name: 'end_at' },
-                            isAllDay: { name: 'is_all_day' }
+                            isAllDay: { name: 'is_all_day' },
+                            projectId: { name: 'project_id' } 
                         }}} 
                         actionBegin={handleActionBegin}
+                        popupOpen={handlePopupOpen}
                         group={{ enableCompactView: false, resources: ['Employee'] }}>
                         <ResourcesDirective>
                             <ResourceDirective field='employee_id' title='Employees' name='Employee' allowMultiple={true} dataSource={employees} textField='name' idField='id' colorField='Color'/>
