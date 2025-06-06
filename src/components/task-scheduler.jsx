@@ -21,7 +21,6 @@ export default function TaskScheduler({ employees, tasks, projects }) {
         return value.resourceData[value.resource.textField];
     };
     const getEmployeeDesignation = (value) => {
-        console.log('value.resourceData : ', value.resourceData)
         return value.resourceData.designation;
     };
     const getEmployeeHours = (value) => {
@@ -56,9 +55,18 @@ export default function TaskScheduler({ employees, tasks, projects }) {
     };
     
     const handleActionBegin = async ( args ) => {
-        
+
         console.log('Event type:', args.requestType);
         console.log('Event data:', args.data);
+
+        // Add project_name before saving
+        if (args.data && args.data.project_id) {
+            const selectedProject = projects.find(p => p.id === args.data.project_id);
+            if (selectedProject) {
+                args.data.project_name = selectedProject.name;
+            }
+        }
+
         if (args.requestType === 'eventRemove') {
             deleteTask(args.data);
         }
@@ -68,6 +76,7 @@ export default function TaskScheduler({ employees, tasks, projects }) {
         }
         
         if (args.requestType === 'eventCreate') {
+            console.log('Create Task Data: ', args.data[0])
             createTask(args.data[0]);
         }
     }
@@ -105,7 +114,7 @@ export default function TaskScheduler({ employees, tasks, projects }) {
                 },
                 body: JSON.stringify(task)
             });
-            console.log('Task deleted successfully');
+            console.log('Task updated successfully');
         } catch (error) {
             console.error('Failed to delete task:', error);
         }
@@ -123,47 +132,31 @@ export default function TaskScheduler({ employees, tasks, projects }) {
                 },
                 body: JSON.stringify(task)
             });
-            console.log('Task deleted successfully');
+            console.log('Task created successfully');
         } catch (error) {
             console.error('Failed to delete task:', error);
         }
     }
 
-    const getEventData = () => {
-        const date = scheduleObj.current.selectedDate;
-        return {
-            Id: scheduleObj.current.getEventMaxID(),
-            Subject: '',
-            StartTime: new Date(date.getFullYear(), date.getMonth(), date.getDate(), new Date().getHours(), 0, 0),
-            EndTime: new Date(date.getFullYear(), date.getMonth(), date.getDate(), new Date().getHours() + 1, 0, 0),
-            Location: '',
-            Description: '',
-            IsAllDay: false,
-            CalendarId: 1
-        };
-    };
+    // const handleOnAddTask = () => {
+    //     console.log('handleOnAddTask');
+    //     const date = scheduleObj.current.selectedDate;
 
-    const handleOnAddTask = () => {
-        console.log('handleOnAddTask');
-        const date = scheduleObj.current.selectedDate;
-
-        const cellData = {
-            Id: scheduleObj.current.getEventMaxID(),
-            Subject: '',
-            StartTime: new Date(date.getFullYear(), date.getMonth(), date.getDate(), new Date().getHours(), 0, 0),
-            EndTime: new Date(date.getFullYear(), date.getMonth(), date.getDate(), new Date().getHours() + 1, 0, 0),
-            IsAllDay: false
-          };
+    //     const cellData = {
+    //         Id: scheduleObj.current.getEventMaxID(),
+    //         Subject: '',
+    //         StartTime: new Date(date.getFullYear(), date.getMonth(), date.getDate(), new Date().getHours(), 0, 0),
+    //         EndTime: new Date(date.getFullYear(), date.getMonth(), date.getDate(), new Date().getHours() + 1, 0, 0),
+    //         IsAllDay: false
+    //       };
       
-        scheduleObj.current.openEditor(cellData, 'Add');
-    }
+    //     scheduleObj.current.openEditor(cellData, 'Add');
+    // }
 
     const handleRenderCell = (args) => {
-        console.log('Yay: ', args.elementType);
         if (args.elementType === 'emptyCells' || args.elementType === 'resourceHeaderCells') {
             //const cellDate = new Date(args.data.date);
             //const day = cellDate.getDay();
-            console.log('day: ');
             // if (day === 0 || day === 6) {
             //     args.element.classList.add('weekend-disabled');
             // } else {
@@ -178,22 +171,21 @@ export default function TaskScheduler({ employees, tasks, projects }) {
           scheduleObj.current.openEditor(args.data, args.target.classList.contains('e-appointment') ? 'Save' : 'Add');
         }
 
-        if (args.type === 'Editor') {
-            setTimeout(() => {
-              const dialog = document.querySelector('.e-schedule-dialog .e-dlg-header');
-              if (dialog) {
-                dialog.textContent = args.data.Id ? 'Edit Booking' : 'New Booking';
-              }
-            }, 0);
-          }
+        // if (args.type === 'Editor') {
+        //     setTimeout(() => {
+        //       const dialog = document.querySelector('.e-schedule-dialog .e-dlg-header');
+        //       if (dialog) {
+        //         dialog.textContent = args.data.Id ? 'Edit Booking' : 'New Booking';
+        //       }
+        //     }, 0);
+        //   }
       };
 
     const EventTemplate = (props) => {
         return (
-          <div style={{ padding: '4px' }}>
-            <div><strong>{props.Subject}</strong></div>
-            <div>{props.Location}</div>
-            <div>{props.Project}</div> {/* Custom field if added */}
+          <div style={{ padding: '1px' }}>
+            <div><strong>{props.project_name}</strong></div>
+            <div>{props.name}</div>
           </div>
         );
     };
@@ -207,7 +199,7 @@ export default function TaskScheduler({ employees, tasks, projects }) {
               <DropDownListComponent
                     dataSource={projects}
                     fields={{ text: 'name', value: 'id' }}
-                    value={props.ProjectId || props.project_id}
+                    value={props.project_id || ''}
                     name="project_id"
                     className="e-field"
                     placeholder="Select Project"
@@ -257,9 +249,9 @@ export default function TaskScheduler({ employees, tasks, projects }) {
       
 
     return (<div className='schedule-control-section'>
-        <div className='flex justify-end'>
+        {/* <div className='flex justify-end'>
             <button id="addEventBtn" className='text-white mb-1' onClick={handleOnAddTask}>Add Task</button>
-        </div>
+        </div> */}
         <div className='col-lg-12 control-section'>
             <div className='control-wrapper drag-sample-wrapper'>
                 <div className="schedule-container">
@@ -279,7 +271,8 @@ export default function TaskScheduler({ employees, tasks, projects }) {
                             startTime: { name: 'start_at' },
                             endTime: { name: 'end_at' },
                             isAllDay: { name: 'is_all_day' },
-                            projectId: { name: 'project_id' } 
+                            projectId: { name: 'project_id' },
+                            projectName: {name: 'project_name' } 
                         }}} 
                         actionBegin={handleActionBegin}
                         popupOpen={handlePopupOpen}

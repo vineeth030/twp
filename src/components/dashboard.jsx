@@ -50,7 +50,7 @@ export default function Dashboard() {
         const token = localStorage.getItem('token');
 
         fetch(`${API_BASE_URL}/api/team-members`, {headers:{'Accept': 'application/json','Authorization': `Bearer ${token}`}})
-          .then((res) => { console.log('Fetching employees...'); return res.json(); })
+          .then((res) => { return res.json(); })
           .then((data) => setTeamMembers(data.members))
           .catch((err) => console.error(err));
     }
@@ -59,7 +59,7 @@ export default function Dashboard() {
         const token = localStorage.getItem('token');
     
         fetch(`${API_BASE_URL}/api/projects`, { headers: {'Accept': 'application/json', 'Authorization': `Bearer ${token}`}})
-        .then((res) => {console.log('Fetching projects...'); return res.json();})
+        .then((res) => { return res.json();})
         .then((data) => setProjects(data.projects)) // assuming your controller returns { projects: [...] }
         .catch((err) => console.error('Error fetching projects:', err));
     }
@@ -68,7 +68,7 @@ export default function Dashboard() {
         const token = localStorage.getItem('token');
 
         fetch(`${API_BASE_URL}/api/employees`, {headers:{'Accept': 'application/json','Authorization': `Bearer ${token}`}})
-          .then((res) => { console.log('Fetching employees...'); return res.json(); })
+          .then((res) => { return res.json(); })
           .then((data) => setEmployees(data.employees))
           .catch((err) => console.error(err));
     }

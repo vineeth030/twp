@@ -38,7 +38,7 @@ class TaskController extends Controller
 
     public function index()
     {
-        $tasks = Task::where('company_id', Auth::user()->company_id)->get()->map(function ($task) {
+        $tasks = Task::where('company_id', Auth::user()->company_id)->with(['project'])->get()->map(function ($task) {
             return [
                 'id' => $task->id,
                 'name' => $task->name, // or 'Subject' if you're using legacy keys
@@ -47,6 +47,7 @@ class TaskController extends Controller
                 'is_all_day' => $task->is_all_day,
                 'employee_id' => $task->employee_id,
                 'project_id' => $task->project_id,
+                'project_name' => $task->project->name
             ];
         });
 
