@@ -24,6 +24,8 @@ class TaskController extends Controller
             return response()->json(['errors' => $validator->errors()], 422);
         }
 
+        Log::info("Data: ", [$request->all()]);
+
         $task = Task::create([
             'name' => $request->input('name'),
             'start_at' => Carbon::parse($request->input('start_at')),
@@ -31,6 +33,7 @@ class TaskController extends Controller
             'employee_id' => $request->input('employee_id'),
             'company_id' => Auth::user()->company_id,
             'project_id' => $request->input('project_id'),
+            'total_hours' => $request->input('totalWorkingHours')
         ]);
 
         return response()->json(['message' => 'Task created successfully', 'task' => $task], 201);

@@ -19,6 +19,8 @@ return new class extends Migration
             $table->integer('employee_id');
             $table->integer('company_id');
             $table->integer('project_id');
+            $table->integer('total_hours')->default(0);
+            $table->boolean('billable')->default(true);
             $table->boolean('is_all_day')->default(false);
             $table->timestamps();
         });

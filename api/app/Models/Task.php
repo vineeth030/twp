@@ -22,6 +22,8 @@ class Task extends Model
         'employee_id',
         'company_id',
         'project_id',
+        'total_hours',
+        'billable',
         'is_all_day'
     ];
 

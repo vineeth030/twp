@@ -122,8 +122,11 @@ export default function ProjectListing({ projects, setProjects }) {
                 <thead className="text-xs text-gray-700 uppercase bg-gray-100">
                     <tr className="border-b">
                         <th className="px-2 py-3 border-b">Name</th>
-                        <th className="px-2 py-3 border-b">Budget</th>
+                        <th className="px-2 py-3 border-b">Budget (Rs)</th>
                         <th className="px-2 py-3 border-b">Estimated Hours</th>
+                        <th className="px-2 py-3 border-b">Billed Hours</th>
+                        <th className="px-2 py-3 border-b">Total Project Expenses</th>
+                        <th className="px-2 py-3 border-b">Budget Status</th>
                         <th className="px-2 py-3 border-b">Action</th>
                     </tr>
                 </thead>
@@ -131,8 +134,11 @@ export default function ProjectListing({ projects, setProjects }) {
                     {projects.map((project) => (
                         <tr key={project.id} className="bg-white hover:bg-gray-50">
                             <td className="px-2 py-2 border-b">{project.name}</td>
-                            <td className="px-2 py-2 border-b">{project.budget}</td>
+                            <td className="px-2 py-2 border-b">{project.budget} ₹</td>
                             <td className="px-2 py-2 border-b">{project.estimated_hours}</td>
+                            <td className="px-2 py-2 border-b">100</td>
+                            <td className="px-2 py-2 border-b">8000 ₹</td>
+                            <td className="px-2 py-2 border-b text-green-700">+2000</td>
                             <td className="px-2 py-2 border-b">
                                 <button
                                     onClick={() => handleEditButtonClick(project)}

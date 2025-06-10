@@ -76,9 +76,60 @@ export default function TaskScheduler({ employees, tasks, projects }) {
         }
         
         if (args.requestType === 'eventCreate') {
+
+            let data = await calculateHoursInATask(args.data[0])
             console.log('Create Task Data: ', args.data[0])
-            createTask(args.data[0]);
+            console.log('After calculate: ', data)
+            createTask(data);
         }
+    }
+
+    const calculateHoursInATask = (eventData) => {
+        const startDate = new Date(eventData.start_at);
+        const endDate = new Date(eventData.end_at);
+
+        // Working hours definition
+        const WORK_DAY_START_HOUR = 9;
+        const WORK_DAY_END_HOUR = 17;
+        const WORK_DAY_HOURS = WORK_DAY_END_HOUR - WORK_DAY_START_HOUR;
+
+        const isWorkingDay = (date) => {
+            const day = date.getDay();
+            return day !== 0 && day !== 6; // 0 = Sunday, 6 = Saturday
+        };
+
+        let totalWorkingHours = 0;
+        let currentDate = new Date(startDate);
+
+        while (currentDate <= endDate) {
+            if (isWorkingDay(currentDate)) {
+                if (currentDate.toDateString() === startDate.toDateString()) {
+                    // First day
+                    const startHour = Math.max(startDate.getHours() + startDate.getMinutes() / 60, WORK_DAY_START_HOUR);
+                    const endHour = WORK_DAY_END_HOUR;
+                    totalWorkingHours += Math.max(0, Math.min(endHour, WORK_DAY_END_HOUR) - startHour);
+                } else if (currentDate.toDateString() === endDate.toDateString()) {
+                    // Last day
+                    const startHour = WORK_DAY_START_HOUR;
+                    const endHour = Math.min(endDate.getHours() + endDate.getMinutes() / 60, WORK_DAY_END_HOUR);
+                    totalWorkingHours += Math.max(0, endHour - startHour);
+                } else {
+                    // Full working day in between
+                    totalWorkingHours += WORK_DAY_HOURS;
+                }
+            }
+
+            // Move to next day
+            currentDate.setDate(currentDate.getDate() + 1);
+            currentDate.setHours(0, 0, 0, 0); // Reset time to midnight
+        }
+
+        console.log(`Total working hours: ${totalWorkingHours}`);
+
+        // Optional: add to your eventData
+        eventData.totalWorkingHours = totalWorkingHours;
+
+        return eventData;
     }
 
     const deleteTask = async (data) => {
