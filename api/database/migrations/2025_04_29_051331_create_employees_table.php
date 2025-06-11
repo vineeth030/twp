@@ -18,6 +18,7 @@ return new class extends Migration
             $table->string('designation');
             $table->string('group_id')->default(1);
             $table->integer('company_id');
+            $table->float('hourly_rate')->default(0);
             $table->string('color');
             $table->timestamps();
         });

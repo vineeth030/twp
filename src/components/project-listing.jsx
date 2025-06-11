@@ -135,10 +135,14 @@ export default function ProjectListing({ projects, setProjects }) {
                         <tr key={project.id} className="bg-white hover:bg-gray-50">
                             <td className="px-2 py-2 border-b">{project.name}</td>
                             <td className="px-2 py-2 border-b">{project.budget} ₹</td>
-                            <td className="px-2 py-2 border-b">{project.estimated_hours}</td>
-                            <td className="px-2 py-2 border-b">100</td>
-                            <td className="px-2 py-2 border-b">8000 ₹</td>
-                            <td className="px-2 py-2 border-b text-green-700">+2000</td>
+                            <td className="px-2 py-2 border-b">{project.estimated_hours} Hrs</td>
+                            <td className="px-2 py-2 border-b">{project.total_billable_hours} Hrs</td>
+                            <td className="px-2 py-2 border-b">{project.total_project_expenses} ₹</td>
+                            <td className="px-2 py-2 border-b text-green-700">
+                                {project.is_over_budget && <span>- </span>}
+                                {!project.is_over_budget && <span>+ </span>}
+                                {project.budget_expenses_difference}
+                            </td>
                             <td className="px-2 py-2 border-b">
                                 <button
                                     onClick={() => handleEditButtonClick(project)}
