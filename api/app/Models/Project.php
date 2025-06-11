@@ -10,6 +10,8 @@ class Project extends Model
         'name',
         'budget',
         'estimated_hours',
-        'company_id'
+        'company_id',
+        'color',
+        'is_billable'
     ];
 }

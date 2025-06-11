@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useActionState, useState } from "react";
 import ConfirmDeleteModal from "./ui/confirm-delete-modal";
 import ProjectEditFormModal from "./project-edit-form";
 import ProjectAddFormModal from "./project-add-form";
@@ -12,12 +12,18 @@ export default function ProjectListing({ projects, setProjects }) {
     const [selectedProject, setSelectedProject] = useState(null);
     const [projectName, setProjectName] = useState("");
     const [projectBudget, setProjectBudget] = useState("");
+    const [projectColor, setProjectColor] = useState("");
     const [estimatedHours, setEstimatedHours] = useState("");
+    const [isBillable, setIsBillable] = useState(true);
+    const [selectedEmployees, setSelectedEmployees] = useState("");
 
     const handleEditButtonClick = (project) => {
         setSelectedProject(project);
         setProjectName(project.name);
         setProjectBudget(project.budget);
+        setProjectColor(project.color);
+        setIsBillable(project.is_billable);
+        setSelectedEmployees(""); // Update this
         setEstimatedHours(project.estimated_hours);
         setIsEditModalOpen(true);
     };
@@ -26,6 +32,9 @@ export default function ProjectListing({ projects, setProjects }) {
         setProjectName("");
         setProjectBudget("");
         setEstimatedHours("");
+        setProjectColor("");
+        setIsBillable(true);
+        setSelectedEmployees("");
         setIsAddModalOpen(true);
     };
 
@@ -175,8 +184,14 @@ export default function ProjectListing({ projects, setProjects }) {
                 projectName={projectName}
                 projectBudget={projectBudget}
                 estimatedHours={estimatedHours}
+                projectColor={projectColor}
+                isBillable={isBillable}
+                selectedEmployees={selectedEmployees}
                 setProjectName={setProjectName}
                 setProjectBudget={setProjectBudget}
+                setProjectColor={setProjectColor}
+                setIsBillable={setIsBillable}
+                setSelectedEmployees={setSelectedEmployees}
                 setEstimatedHours={setEstimatedHours}
                 handleSubmit={handleEditFormSubmit}
             />

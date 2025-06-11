@@ -17,6 +17,8 @@ return new class extends Migration
             $table->float('budget')->nullable();
             $table->float('estimated_hours')->nullable();
             $table->string('company_id');
+            $table->string('color')->default('#ccc');
+            $table->boolean('is_billable')->default(true);
             $table->timestamps();
         });
     }

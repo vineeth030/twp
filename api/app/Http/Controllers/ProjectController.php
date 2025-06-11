@@ -23,6 +23,7 @@ class ProjectController extends Controller
                 'id' => $project->id,
                 'name' => $project->name,
                 'budget' => $project->budget,
+                'color' => $project->color,
                 'estimated_hours' => $project->estimated_hours,
                 'is_over_budget' => ( $project->budget - $total_expenses ) < 0, // example condition
                 'budget_expenses_difference' => $project->budget - $total_expenses,
