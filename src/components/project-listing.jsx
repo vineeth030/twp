@@ -57,6 +57,9 @@ export default function ProjectListing({ projects, employees, setProjects }) {
                 name: projectName,
                 budget: projectBudget || null,
                 estimated_hours: estimatedHours || null,
+                color: projectColor,
+                is_billable: isBillable,
+                selected_employees: selectedEmployees
             }),
         });
 
@@ -219,11 +222,18 @@ export default function ProjectListing({ projects, employees, setProjects }) {
             <ProjectAddFormModal
                 isOpen={isAddModalOpen}
                 onClose={() => setIsAddModalOpen(false)}
+                employees={employees}
                 projectName={projectName}
                 projectBudget={projectBudget}
                 estimatedHours={estimatedHours}
+                projectColor={projectColor}
+                isBillable={isBillable}
+                selectedEmployees={selectedEmployees}
                 setProjectName={setProjectName}
                 setProjectBudget={setProjectBudget}
+                setProjectColor={setProjectColor}
+                setIsBillable={setIsBillable}
+                setSelectedEmployees={setSelectedEmployees}
                 setEstimatedHours={setEstimatedHours}
                 handleSubmit={handleAddFormSubmit}
             />

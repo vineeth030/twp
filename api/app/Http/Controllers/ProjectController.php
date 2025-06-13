@@ -47,6 +47,9 @@ class ProjectController extends Controller
             'name' => 'required|string|max:255',
             'budget' => 'nullable|numeric',
             'estimated_hours' => 'nullable|numeric',
+            'color' => 'required',
+            'is_billable' => 'required',
+            'selected_employees' => 'nullable|array'
         ]);
 
         if ($validator->fails()) {
