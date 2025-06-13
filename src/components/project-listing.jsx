@@ -5,7 +5,7 @@ import ProjectAddFormModal from "./project-add-form";
 
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
 
-export default function ProjectListing({ projects, setProjects }) {
+export default function ProjectListing({ projects, employees, setProjects }) {
     const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
     const [isEditModalOpen, setIsEditModalOpen] = useState(false);
     const [isAddModalOpen, setIsAddModalOpen] = useState(false);
@@ -15,15 +15,16 @@ export default function ProjectListing({ projects, setProjects }) {
     const [projectColor, setProjectColor] = useState("");
     const [estimatedHours, setEstimatedHours] = useState("");
     const [isBillable, setIsBillable] = useState(true);
-    const [selectedEmployees, setSelectedEmployees] = useState("");
+    const [selectedEmployees, setSelectedEmployees] = useState([]);
 
     const handleEditButtonClick = (project) => {
+        console.log('project data: ', project)
         setSelectedProject(project);
         setProjectName(project.name);
         setProjectBudget(project.budget);
         setProjectColor(project.color);
         setIsBillable(project.is_billable);
-        setSelectedEmployees(""); // Update this
+        setSelectedEmployees(project.selected_employees); // Update this
         setEstimatedHours(project.estimated_hours);
         setIsEditModalOpen(true);
     };
@@ -34,7 +35,7 @@ export default function ProjectListing({ projects, setProjects }) {
         setEstimatedHours("");
         setProjectColor("");
         setIsBillable(true);
-        setSelectedEmployees("");
+        setSelectedEmployees([]);
         setIsAddModalOpen(true);
     };
 
@@ -72,6 +73,9 @@ export default function ProjectListing({ projects, setProjects }) {
     const handleEditFormSubmit = async () => {
         const token = localStorage.getItem("token");
 
+        console.log('isBillable: ', isBillable);
+        console.log('selected employees: ', selectedEmployees);
+
         const response = await fetch(`${API_BASE_URL}/api/projects/${selectedProject.id}`, {
             method: "PATCH",
             headers: {
@@ -82,6 +86,9 @@ export default function ProjectListing({ projects, setProjects }) {
                 name: projectName,
                 budget: projectBudget || null,
                 estimated_hours: estimatedHours || null,
+                color: projectColor,
+                is_billable: isBillable,
+                selected_employees: selectedEmployees
             }),
         });
 
@@ -93,7 +100,8 @@ export default function ProjectListing({ projects, setProjects }) {
         setProjects((prev) =>
             prev.map((proj) =>
                 proj.id === selectedProject.id
-                    ? { ...proj, name: projectName, budget: projectBudget, estimated_hours: estimatedHours }
+                    ? { ...proj, name: projectName, budget: projectBudget, estimated_hours: estimatedHours, 
+                        color: projectColor, is_billable: isBillable, selected_employees: selectedEmployees }
                     : proj
             )
         );
@@ -143,14 +151,25 @@ export default function ProjectListing({ projects, setProjects }) {
                     {projects.map((project) => (
                         <tr key={project.id} className="bg-white hover:bg-gray-50">
                             <td className="px-2 py-2 border-b">{project.name}</td>
-                            <td className="px-2 py-2 border-b">{project.budget} ₹</td>
+                            <td className="px-2 py-2 border-b">
+                                { project.is_billable ? project.budget + ' ₹' : '-' }
+                            </td>
                             <td className="px-2 py-2 border-b">{project.estimated_hours} Hrs</td>
-                            <td className="px-2 py-2 border-b">{project.total_billable_hours} Hrs</td>
-                            <td className="px-2 py-2 border-b">{project.total_project_expenses} ₹</td>
+                            <td className="px-2 py-2 border-b">
+                                { project.is_billable ? project.total_billable_hours + ' Hrs' : '-' }
+                            </td>
+                            <td className="px-2 py-2 border-b">
+                                { project.is_billable ? project.total_project_expenses + ' ₹' : '-' }
+                            </td>
                             <td className="px-2 py-2 border-b text-green-700">
-                                {project.is_over_budget && <span>- </span>}
-                                {!project.is_over_budget && <span>+ </span>}
-                                {project.budget_expenses_difference}
+                                {project.is_billable ? (
+                                    <>
+                                        <span>{project.is_over_budget ? '- ' : '+ '}</span>
+                                        {project.budget_expenses_difference}
+                                    </>
+                                ) : (
+                                    '-'
+                                )}
                             </td>
                             <td className="px-2 py-2 border-b">
                                 <button
@@ -181,6 +200,7 @@ export default function ProjectListing({ projects, setProjects }) {
             <ProjectEditFormModal
                 isOpen={isEditModalOpen}
                 onClose={() => setIsEditModalOpen(false)}
+                employees={employees}
                 projectName={projectName}
                 projectBudget={projectBudget}
                 estimatedHours={estimatedHours}

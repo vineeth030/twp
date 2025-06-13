@@ -13,7 +13,7 @@ class ProjectController extends Controller
 {
     public function index()
     {
-        $projects = Project::where('company_id', Auth::user()->company_id)->get();
+        $projects = Project::with('employees')->where('company_id', Auth::user()->company_id)->get();
 
         $projects = $projects->map(function($project){
 
@@ -24,6 +24,7 @@ class ProjectController extends Controller
                 'name' => $project->name,
                 'budget' => $project->budget,
                 'color' => $project->color,
+                'is_billable' => $project->is_billable,
                 'estimated_hours' => $project->estimated_hours,
                 'is_over_budget' => ( $project->budget - $total_expenses ) < 0, // example condition
                 'budget_expenses_difference' => $project->budget - $total_expenses,
@@ -31,6 +32,7 @@ class ProjectController extends Controller
                 'created_at_formatted' => $project->created_at->format('Y-m-d'),
                 'total_billable_hours' => $total_hours,
                 'total_project_expenses' => $total_expenses,
+                'selected_employees' => $project->employees->pluck('id'),
                 // Add any relationship data if needed
                 'client_name' => optional($project->client)->name,
             ];
@@ -69,6 +71,9 @@ class ProjectController extends Controller
             'name' => 'required|string|max:255',
             'budget' => 'nullable|numeric',
             'estimated_hours' => 'nullable|numeric',
+            'color' => 'required',
+            'is_billable' => 'required',
+            'selected_employees' => 'nullable|array'
         ]);
 
         if ($validator->fails()) {
@@ -79,7 +84,15 @@ class ProjectController extends Controller
             'name' => $request->input('name'),
             'budget' => $request->input('budget'),
             'estimated_hours' => $request->input('estimated_hours'),
+            'color' => $request->input('color'),
+            'is_billable' => $request->input('is_billable'),
         ]);
+
+        if ($request->filled('selected_employees')) {
+            $project->employees()->sync($request->input('selected_employees'));
+        } else {
+            $project->employees()->sync([]); // remove all if none selected
+        }
 
         return response()->json(['message' => 'Project updated successfully', 'project' => $project]);
     }

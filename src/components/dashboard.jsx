@@ -107,7 +107,7 @@ export default function Dashboard() {
             <main className="container mx-auto min-h-[700px] px-9">
             {showProjects && (
                 <>
-                <ProjectListing projects={projects} setProjects={setProjects} />
+                <ProjectListing projects={projects} employees={employees} setProjects={setProjects} />
                 </>
             )}
 

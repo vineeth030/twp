@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 
 class Project extends Model
 {
@@ -14,4 +15,12 @@ class Project extends Model
         'color',
         'is_billable'
     ];
+
+    /**
+     * The employees that belong to the project.
+     */
+    public function employees(): BelongsToMany
+    {
+        return $this->belongsToMany(Employee::class);
+    }
 }
