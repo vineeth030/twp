@@ -14,12 +14,14 @@ export default function EmployeeListing({ employees, setEmployees }) {
     const [employeeName, setEmployeeName] = useState("")
     const [employeeEmail, setEmployeeEmail] = useState("")
     const [employeeDesignation, setEmployeeDesignation] = useState("")
+    const [employeeHourlyRate, setEmployeeHourlyRate] = useState("")
 
     const handleEditButtonClick = (employee) => {
         setSelectedEmployee(employee)
         setEmployeeName(employee.name)
         setEmployeeEmail(employee.email)
         setEmployeeDesignation(employee.designation)
+        setEmployeeHourlyRate(employee.hourly_rate)
         setIsEditModalOpen(true)
     }
 
@@ -34,7 +36,7 @@ export default function EmployeeListing({ employees, setEmployees }) {
     }
 
     const handleAddFormSubmit = async () => {
-        console.log('Employee edit form submit : ', { employeeName, employeeEmail, employeeDesignation });
+        console.log('Employee edit form submit : ', { employeeName, employeeEmail, employeeDesignation, employeeHourlyRate });
 
         if (!employeeName || !employeeEmail || !employeeDesignation) {
             console.error('All fields are required');
@@ -46,7 +48,8 @@ export default function EmployeeListing({ employees, setEmployees }) {
         console.log('Data: ', {
             'name': employeeName,
             'email': employeeEmail,
-            'designation' : employeeDesignation
+            'designation' : employeeDesignation,
+            'hourlyRate': employeeHourlyRate
         });
 
         const response = await fetch(`${API_BASE_URL}/api/employees`, {
@@ -58,7 +61,8 @@ export default function EmployeeListing({ employees, setEmployees }) {
             body: JSON.stringify({
                 'name': employeeName,
                 'email': employeeEmail,
-                'designation' : employeeDesignation
+                'designation' : employeeDesignation,
+                'hourly_rate': employeeHourlyRate
             })
         });
 
@@ -78,8 +82,8 @@ export default function EmployeeListing({ employees, setEmployees }) {
         setIsAddModalOpen(false);
     }
 
-    const handleSubmit = async () => {
-        console.log('Employee edit form submit : ', { employeeName, employeeEmail, employeeDesignation });
+    const handleEditFormSubmit = async () => {
+        console.log('Employee edit form submit : ', { employeeName, employeeEmail, employeeDesignation, employeeHourlyRate });
 
         if (!employeeName || !employeeEmail || !employeeDesignation) {
             console.error('All fields are required');
@@ -97,7 +101,8 @@ export default function EmployeeListing({ employees, setEmployees }) {
             body: JSON.stringify({
                 'name': employeeName,
                 'email': employeeEmail,
-                'designation' : employeeDesignation
+                'designation' : employeeDesignation,
+                'hourly_rate': employeeHourlyRate
             })
         });
 
@@ -111,7 +116,7 @@ export default function EmployeeListing({ employees, setEmployees }) {
         setEmployees((prev) =>
             prev.map((emp) =>
                 emp.id === selectedEmployee.id
-                  ? { ...emp, name: employeeName, email: employeeEmail, designation: employeeDesignation }
+                  ? { ...emp, name: employeeName, email: employeeEmail, designation: employeeDesignation, hourlyRate: employeeHourlyRate }
                   : emp
             )
         );
@@ -190,11 +195,13 @@ export default function EmployeeListing({ employees, setEmployees }) {
                 employeeName={employeeName}
                 employeeEmail={employeeEmail}
                 employeeDesignation={employeeDesignation}
+                employeeHourlyRate={employeeHourlyRate}
                 setEmployeeName={setEmployeeName}
                 setEmployeeEmail={setEmployeeEmail}
                 setEmployeeDesignation={setEmployeeDesignation}
+                setEmployeeHourlyRate={setEmployeeHourlyRate}
                 setSelectedEmployee={setSelectedEmployee}
-                handleSubmit={handleSubmit}
+                handleSubmit={handleEditFormSubmit}
             />
 
             <EmployeeAddFormModal

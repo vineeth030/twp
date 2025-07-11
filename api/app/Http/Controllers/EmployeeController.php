@@ -43,7 +43,8 @@ class EmployeeController extends Controller
         $employee->update([
             'name' => $request->input('name'),
             'email' => $request->input('email'),
-            'designation' => $request->input('designation')
+            'designation' => $request->input('designation'),
+            'hourly_rate' => $request->input('hourly_rate')
         ]);
 
         return response()->json(['message' => 'Task updated successfully']);

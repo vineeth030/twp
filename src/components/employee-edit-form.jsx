@@ -1,13 +1,14 @@
 import React, { useState, useEffect } from "react";
 
 const EmployeeEditFormModal = ({ 
-    isOpen, onClose, employeeName, employeeEmail, employeeDesignation, 
-    setEmployeeName, setEmployeeEmail, setEmployeeDesignation, handleSubmit
+    isOpen, onClose, employeeName, employeeEmail, employeeDesignation, employeeHourlyRate,
+    setEmployeeName, setEmployeeEmail, setEmployeeDesignation, setEmployeeHourlyRate, handleSubmit
 }) => {
   const [errors, setErrors] = useState({
     name: '',
     email: '',
-    designation: ''
+    designation: '',
+    hourlyRate: ''
   });
 
   useEffect(() => {
@@ -16,7 +17,8 @@ const EmployeeEditFormModal = ({
       setErrors({
         name: '',
         email: '',
-        designation: ''
+        designation: '',
+        hourlyRate: ''
       });
     }
   }, [isOpen]);
@@ -25,7 +27,8 @@ const EmployeeEditFormModal = ({
     const newErrors = {
       name: '',
       email: '',
-      designation: ''
+      designation: '',
+      hourlyRate: 0
     };
     let isValid = true;
 
@@ -74,9 +77,11 @@ const EmployeeEditFormModal = ({
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center backdrop-blur-sm backdrop-brightness-75">
       <div className="bg-white p-6 rounded-2xl shadow-xl w-full max-w-md">
-        <h2 className="text-l font-semibold text-gray-800 pb-5">Edit Employee</h2>    
+        <h2 className="text-xl font-semibold mb-1">Edit Employee</h2>
+        <hr className="border-t border-gray-300 mb-5" />    
         <div className="grid grid-cols-1 gap-4">
             <div>
+                <label className="block text-sm font-medium mb-1">Employee Name</label>
                 <input 
                     placeholder="Name" 
                     value={employeeName} 
@@ -91,6 +96,7 @@ const EmployeeEditFormModal = ({
                 {errors.name && <p className="mt-1 text-sm text-red-500">{errors.name}</p>}
             </div>
             <div>
+                <label className="block text-sm font-medium mb-1">Employee Email</label>
                 <input 
                     placeholder="Email" 
                     value={employeeEmail} 
@@ -106,6 +112,7 @@ const EmployeeEditFormModal = ({
                 {errors.email && <p className="mt-1 text-sm text-red-500">{errors.email}</p>}
             </div>
             <div>
+                <label className="block text-sm font-medium mb-1">Employee Designation</label>
                 <input 
                     placeholder="Designation" 
                     value={employeeDesignation} 
@@ -118,6 +125,21 @@ const EmployeeEditFormModal = ({
                     className={`w-full px-4 py-2 border ${errors.designation ? 'border-red-500' : 'border-gray-300'} rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500`}
                 />
                 {errors.designation && <p className="mt-1 text-sm text-red-500">{errors.designation}</p>}
+            </div>
+            <div>
+                <label className="block text-sm font-medium mb-1">Hourly Rate</label>
+                <input 
+                    placeholder="Hourly Rate" 
+                    value={employeeHourlyRate} 
+                    onChange={(e) => {
+                        setEmployeeHourlyRate(e.target.value);
+                        if (errors.hourlyRate) {
+                            setErrors(prev => ({ ...prev, hourlyRate: '' }));
+                        }
+                    }}
+                    className={`w-full px-4 py-2 border ${errors.hourlyRate ? 'border-red-500' : 'border-gray-300'} rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500`}
+                />
+                {errors.hourlyRate && <p className="mt-1 text-sm text-red-500">{errors.hourlyRate}</p>}
             </div>
         </div>
         <div className="flex justify-end gap-1 mt-5">
