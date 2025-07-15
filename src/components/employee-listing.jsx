@@ -116,7 +116,7 @@ export default function EmployeeListing({ employees, setEmployees }) {
         setEmployees((prev) =>
             prev.map((emp) =>
                 emp.id === selectedEmployee.id
-                  ? { ...emp, name: employeeName, email: employeeEmail, designation: employeeDesignation, hourlyRate: employeeHourlyRate }
+                  ? { ...emp, name: employeeName, email: employeeEmail, designation: employeeDesignation, hourly_rate: employeeHourlyRate }
                   : emp
             )
         );
@@ -154,6 +154,7 @@ export default function EmployeeListing({ employees, setEmployees }) {
 
     return (
         <div class="overflow-x-auto pt-5">
+            <h1>Employees</h1>
             <div className="flex justify-end mb-2">
                 <button onClick={ () => handleAddButtonClick() } className="px-3 py-1 text-sm text-white bg-blue-500 rounded hover:bg-blue-600">Add Employee</button>
             </div>

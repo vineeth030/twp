@@ -83,6 +83,7 @@ export default function TeamMemberListing({ members, setMembers }) {
 
     return (
         <div className="overflow-x-auto pt-5">
+            <h1>Teams</h1>
             <div className="flex justify-end mb-2">
                 <button onClick={handleAdd} className="px-3 py-1 text-sm text-white bg-blue-500 rounded hover:bg-blue-600">Add Team Member</button>
             </div>

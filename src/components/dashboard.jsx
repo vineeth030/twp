@@ -85,26 +85,43 @@ export default function Dashboard() {
     return (
         <>
             <div className='flex w-screen justify-between items-center mb-10 px-9'>
-                <div>
-                    <h2 className="text-2xl font-bold">Task Manager</h2>
-                </div>
-                <div className="flex gap-2">
-                    { !showProjects && (user.is_company_owner == 1) && (
-                        <button className='text-white' onClick={() => {setShowProjects(prev => !prev); setShowEmployees(false); setShowTeamMembers(false);}} >Manage Projects</button>
-                        )
-                    }
-                    { !showTeamMembers && (user.is_company_owner == 1) && (
-                        <button className='text-white' onClick={() => {setShowTeamMembers(prev => !prev); setShowEmployees(false); setShowProjects(false);}} >Manage Team Members</button>
-                        )
-                    }
-                    { !showEmployees && ( 
-                        <button className='text-white' onClick={() => {setShowEmployees(prev => !prev); setShowTeamMembers(false); setShowProjects(false);}} >Manage Employees</button>
-                        )}
-                    { (showEmployees || showTeamMembers || showProjects) && ( <button className='text-white' onClick={() => {setShowEmployees(false); setShowTeamMembers(false);setShowProjects(false);}} >Home</button> )}
-                    <button className='text-white' onClick={() => handleLogout()} >Logout</button>
-                </div>
+                <nav class="bg-white shadow-md px-6 py-3 w-screen flex items-center justify-between">
+                    <div class="flex items-center space-x-6">
+                        <div class="text-xl font-bold text-gray-800">Task Manager</div>
+                        <div class="flex space-x-4">
+                            { (showEmployees || showTeamMembers || showProjects) && (
+                            <button onClick={() => {setShowEmployees(false); setShowTeamMembers(false);setShowProjects(false);}} class="text-gray-600 hover:text-blue-600">Home</button>
+                            )}
+                            { !showProjects && (user.is_company_owner == 1) && (
+                            <button onClick={() => {setShowProjects(prev => !prev); setShowEmployees(false); setShowTeamMembers(false);}} class="text-gray-600 hover:text-blue-600">Manage Projects</button>
+                            )}
+                            { !showTeamMembers && (user.is_company_owner == 1) && (
+                            <button onClick={() => {setShowTeamMembers(prev => !prev); setShowEmployees(false); setShowProjects(false);}} class="text-gray-600 hover:text-blue-600">Manage Team Members</button>
+                            )}
+                            { !showEmployees && (
+                            <button onClick={() => {setShowEmployees(prev => !prev); setShowTeamMembers(false); setShowProjects(false);}} class="text-gray-600 hover:text-blue-600">Manage Employees</button>
+                            )}
+                        </div>
+                    </div>
+
+                    <div class="relative group p-5">
+                        <div class="flex items-center space-x-2 cursor-pointer">
+                            <span class="text-gray-700 font-medium">John Doe</span>
+                            <svg class="w-4 h-4 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
+                            </svg>
+                        </div>
+
+                        <div class="absolute right-0 mt-2 w-40 bg-white border rounded-md shadow-md opacity-0 group-hover:opacity-100 invisible group-hover:visible transition duration-200 z-50">
+                            <button class="block w-full px-4 py-2 text-gray-700 hover:bg-gray-100">Profile</button>
+                            <button class="block w-full px-4 py-2 text-gray-700 hover:bg-gray-100">Settings</button>
+                            <button href="#" onClick={() => handleLogout()} class="block w-full px-4 py-2 text-gray-700 hover:bg-gray-100">Logout</button>
+                        </div>
+                    </div>
+                </nav>
             </div>
-            <main className="container mx-auto min-h-[700px] px-9">
+
+            <main className="container mx-10 min-h-[700px]">
             {showProjects && (
                 <>
                 <ProjectListing projects={projects} employees={employees} setProjects={setProjects} />

@@ -306,7 +306,7 @@ export default function TaskScheduler({ employees, tasks, projects }) {
         <div className='col-lg-12 control-section'>
             <div className='control-wrapper drag-sample-wrapper'>
                 <div className="schedule-container">
-                    <ScheduleComponent cssClass='block-events' width='100%' height='400px' startHour='08:00' endHour='20:00' 
+                    <ScheduleComponent cssClass='block-events' width='100%' startHour='08:00' endHour='20:00' 
                         selectedDate={new Date()}
                         ref={scheduleObj} 
                         currentView='TimelineMonth'

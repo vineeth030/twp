@@ -130,6 +130,7 @@ export default function ProjectListing({ projects, employees, setProjects }) {
 
     return (
         <div className="overflow-x-auto pt-5">
+            <h1>Projects</h1>
             <div className="flex justify-end mb-2">
                 <button
                     onClick={handleAddButtonClick}

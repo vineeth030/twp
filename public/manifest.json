@@ -3,10 +3,11 @@
     "name": "Resource Manager",
     "description": "A minimal example of a chrome extension using manifest v3",
     "version": "0.0.1",
+    "permissions": ["tabs"],
     "action": {
-        "default_popup": "index.html",
-        "default_width": 1200,
-        "default_height": 400
+        "default_title": "index.html"
     },
-    "permissions": ["tabs"]
+    "background": {
+        "service_worker": "background.js"
+    }
 }

@@ -11,8 +11,6 @@
 @import '@syncfusion/ej2-splitbuttons/styles/material.css';
 @import '@syncfusion/ej2-react-schedule/styles/material.css';
 
-
-
 @custom-variant dark (&:is(.dark *));
 
 :root {
@@ -84,7 +82,7 @@ h1 {
   line-height: 1.1;
 }
 
-button {
+button.one {
   border-radius: 3px;
   border: 1px solid transparent;
   padding: 2px 6px 2px 6px;
