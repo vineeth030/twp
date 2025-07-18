@@ -29,6 +29,8 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::get('/employees', [EmployeeController::class, 'index']);
     Route::patch('/employees/{id}', [EmployeeController::class, 'update']);
 
+    Route::post('/resource-utilization', [EmployeeController::class, 'resourceUtilization']);
+
     Route::get('/team-members', [TeamMemberController::class, 'index']);
     Route::post('/team-members', [TeamMemberController::class, 'store']);
     Route::patch('/team-members/{user}', [TeamMemberController::class, 'update']);

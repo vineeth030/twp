@@ -5,7 +5,7 @@ import EmployeeAddFormModal from "./employee-add-form";
 
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
 
-export default function EmployeeListing({ employees, setEmployees }) {
+export default function EmployeeListing({ employees, setEmployees, setShowEmployee, setShowEmployees, setEmployee }) {
     const [tasks, setTasks] = useState([]) 
     const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
     const [isEditModalOpen, setIsEditModalOpen] = useState(false);
@@ -33,6 +33,13 @@ export default function EmployeeListing({ employees, setEmployees }) {
         console.log('Employee: ', employee)
         setSelectedEmployee(employee);
         setIsDeleteModalOpen(true);
+    }
+
+    const handleViewButtonClick = (employee) => {
+        console.log('View Employee!!');
+        setShowEmployees(false);
+        setShowEmployee(true);
+        setEmployee(employee);
     }
 
     const handleAddFormSubmit = async () => {
@@ -174,8 +181,11 @@ export default function EmployeeListing({ employees, setEmployees }) {
                             <td className="px-2 py-2 border-b">{employee.name}</td>
                             <td className="px-2 py-2 border-b">{employee.email}</td>
                             <td className="px-2 py-2 border-b">{employee.designation}</td>
-                            <td className="px-2 py-1 border-b">
-                                <button onClick={ () => handleEditButtonClick(employee) } className="px-3 py-1 text-sm text-white bg-blue-500 rounded hover:bg-blue-600">Edit</button> <button onClick={ () => handleDeleteButtonClick(employee) } className="px-3 py-1 text-sm text-white bg-red-500 rounded hover:bg-red-600">Delete</button></td>
+                            <td className="px-2 py-1 border-b flex gap-2">
+                                <button onClick={ () => handleViewButtonClick(employee) } className="px-3 py-1 text-sm text-white bg-blue-500 rounded hover:bg-blue-600">View</button> 
+                                <button onClick={ () => handleEditButtonClick(employee) } className="px-3 py-1 text-sm text-white bg-blue-500 rounded hover:bg-blue-600">Edit</button>
+                                <button onClick={ () => handleDeleteButtonClick(employee) } className="px-3 py-1 text-sm text-white bg-red-500 rounded hover:bg-red-600">Delete</button>
+                            </td>
                         </tr>
                     ))
                     }

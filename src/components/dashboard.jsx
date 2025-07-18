@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react"
-import EmployeeForm from "./employee-form";
 import EmployeeListing from "./employee-listing";
+import ResourceUtilization from "./resource-utilization";
 import TaskScheduler from "./task-scheduler";
 import useAuth from "./auth/useAuth";
 import TeamMemberListing from "./team-member-listing";
@@ -14,6 +14,8 @@ export default function Dashboard() {
 
     const [employees, setEmployees] = useState([])
     const [showEmployees, setShowEmployees] = useState(false);
+
+    const [showResourceUtilization, setShowResourceUtilization] = useState(false);
 
     const [projects, setProjects] = useState([]);
     const [showProjects, setShowProjects] = useState(false);
@@ -84,29 +86,32 @@ export default function Dashboard() {
 
     return (
         <>
-            <div className='flex w-screen justify-between items-center mb-10 px-9'>
-                <nav class="bg-white shadow-md px-6 py-3 w-screen flex items-center justify-between">
-                    <div class="flex items-center space-x-6">
+            <div className='flex w-screen justify-between items-center mb-10'>
+                <nav class="bg-white shadow-md px-6 py-2 w-screen flex items-center justify-between">
+                    <div class="flex items-center space-x-6 ml-4">
                         <div class="text-xl font-bold text-gray-800">Task Manager</div>
                         <div class="flex space-x-4">
-                            { (showEmployees || showTeamMembers || showProjects) && (
-                            <button onClick={() => {setShowEmployees(false); setShowTeamMembers(false);setShowProjects(false);}} class="text-gray-600 hover:text-blue-600">Home</button>
+                            { (showEmployees || showTeamMembers || showProjects || showResourceUtilization) && (
+                            <button onClick={() => {setShowResourceUtilization(false); setShowEmployees(false); setShowTeamMembers(false);setShowProjects(false);}} class="text-gray-600 hover:text-blue-600">Home</button>
                             )}
                             { !showProjects && (user.is_company_owner == 1) && (
-                            <button onClick={() => {setShowProjects(prev => !prev); setShowEmployees(false); setShowTeamMembers(false);}} class="text-gray-600 hover:text-blue-600">Manage Projects</button>
+                            <button onClick={() => {setShowProjects(prev => !prev); setShowResourceUtilization(false); setShowEmployees(false); setShowTeamMembers(false);}} class="text-gray-600 hover:text-blue-600">Manage Projects</button>
                             )}
                             { !showTeamMembers && (user.is_company_owner == 1) && (
-                            <button onClick={() => {setShowTeamMembers(prev => !prev); setShowEmployees(false); setShowProjects(false);}} class="text-gray-600 hover:text-blue-600">Manage Team Members</button>
+                            <button onClick={() => {setShowTeamMembers(prev => !prev); setShowResourceUtilization(false); setShowEmployees(false); setShowProjects(false);}} class="text-gray-600 hover:text-blue-600">Manage Team Members</button>
                             )}
                             { !showEmployees && (
-                            <button onClick={() => {setShowEmployees(prev => !prev); setShowTeamMembers(false); setShowProjects(false);}} class="text-gray-600 hover:text-blue-600">Manage Employees</button>
+                            <button onClick={() => {setShowEmployees(prev => !prev); setShowResourceUtilization(false); setShowTeamMembers(false); setShowProjects(false);}} class="text-gray-600 hover:text-blue-600">Manage Employees</button>
+                            )}
+                            { !showResourceUtilization && (
+                            <button onClick={() => {setShowResourceUtilization(prev => !prev); setShowTeamMembers(false); setShowProjects(false); setShowEmployees(false);}} class="text-gray-600 hover:text-blue-600">Resource Utilization</button>
                             )}
                         </div>
                     </div>
 
                     <div class="relative group p-5">
                         <div class="flex items-center space-x-2 cursor-pointer">
-                            <span class="text-gray-700 font-medium">John Doe</span>
+                            <span class="text-gray-700 font-medium">{user.name}</span>
                             <svg class="w-4 h-4 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
                             </svg>
@@ -140,7 +145,13 @@ export default function Dashboard() {
                 </>
             )}
 
-            {!showEmployees && !showTeamMembers && !showProjects && (
+            {showResourceUtilization && (
+                <>
+                <ResourceUtilization />
+                </>
+            )}
+
+            {!showResourceUtilization && !showEmployees && !showTeamMembers && !showProjects && (
                 <>
                 {
                 <TaskScheduler employees={employees} tasks={tasks} projects={projects}/>

@@ -69,4 +69,47 @@ class EmployeeController extends Controller
 
         return response()->json(['employees' => Employee::where('company_id', Auth::user()->company_id)->with(['task'])->get()]);
     }
+
+    public function resourceUtilization($from_date, $to_date) {
+
+        Log::info('From Date: ', $from_date);
+        Log::info('To Date: ', $to_date);
+
+        $employees = Employee::where('company_id', Auth::user()->company_id)
+            ->whereHas('task', function ($query) use ($from_date, $to_date) {
+                $query->where(function ($q) use ($from_date, $to_date) {
+                    $q->where(function ($q) use ($from_date, $to_date) {
+                        $q->where('start_at', '>=', $from_date)
+                        ->where('end_at', '<=', $to_date); // Task completely within range
+                    })->orWhere(function ($q) use ($from_date, $to_date) {
+                        $q->where('start_at', '<', $from_date)
+                        ->where('end_at', '<=', $to_date)
+                        ->where('end_at', '>=', $from_date); // Task starts before, ends within
+                    })->orWhere(function ($q) use ($from_date, $to_date) {
+                        $q->where('start_at', '>=', $from_date)
+                        ->where('start_at', '<=', $to_date)
+                        ->where('end_at', '>', $to_date); // Task starts within, ends after
+                    });
+                });
+            })
+            ->with(['task' => function ($query) use ($from_date, $to_date) {
+                $query->where(function ($q) use ($from_date, $to_date) {
+                    $q->where(function ($q) use ($from_date, $to_date) {
+                        $q->where('start_at', '>=', $from_date)
+                        ->where('end_at', '<=', $to_date);
+                    })->orWhere(function ($q) use ($from_date, $to_date) {
+                        $q->where('start_at', '<', $from_date)
+                        ->where('end_at', '<=', $to_date)
+                        ->where('end_at', '>=', $from_date);
+                    })->orWhere(function ($q) use ($from_date, $to_date) {
+                        $q->where('start_at', '>=', $from_date)
+                        ->where('start_at', '<=', $to_date)
+                        ->where('end_at', '>', $to_date);
+                    });
+                });
+            }])
+            ->get();
+
+        return response()->json(['employees' => $employees]);
+    }
 }
