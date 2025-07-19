@@ -152,7 +152,7 @@ export default function ProjectListing({ projects, employees, setProjects }) {
                     </tr>
                 </thead>
                 <tbody>
-                    {projects.map((project) => (
+                    {projects && projects.map((project) => (
                         <tr key={project.id} className="bg-white hover:bg-gray-50">
                             <td className="px-2 py-2 border-b">{project.name}</td>
                             <td className="px-2 py-2 border-b">

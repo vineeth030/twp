@@ -126,7 +126,7 @@ export default function Dashboard() {
                 </nav>
             </div>
 
-            <main className="container mx-10 min-h-[700px]">
+            <main className="mx-10 min-h-[700px]">
             {showProjects && (
                 <>
                 <ProjectListing projects={projects} employees={employees} setProjects={setProjects} />
