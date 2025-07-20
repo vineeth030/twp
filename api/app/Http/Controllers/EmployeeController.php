@@ -3,6 +3,8 @@
 namespace App\Http\Controllers;
 
 use App\Models\Employee;
+use App\Models\Task;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\Auth;
@@ -72,43 +74,61 @@ class EmployeeController extends Controller
 
     public function resourceUtilization($from_date, $to_date) {
 
-        Log::info('From Date: ', $from_date);
-        Log::info('To Date: ', $to_date);
+        $today = Carbon::today();
+        $endOfMonth = Carbon::now()->endOfMonth();
 
-        $employees = Employee::where('company_id', Auth::user()->company_id)
-            ->whereHas('task', function ($query) use ($from_date, $to_date) {
-                $query->where(function ($q) use ($from_date, $to_date) {
-                    $q->where(function ($q) use ($from_date, $to_date) {
-                        $q->where('start_at', '>=', $from_date)
-                        ->where('end_at', '<=', $to_date); // Task completely within range
-                    })->orWhere(function ($q) use ($from_date, $to_date) {
-                        $q->where('start_at', '<', $from_date)
-                        ->where('end_at', '<=', $to_date)
-                        ->where('end_at', '>=', $from_date); // Task starts before, ends within
-                    })->orWhere(function ($q) use ($from_date, $to_date) {
-                        $q->where('start_at', '>=', $from_date)
-                        ->where('start_at', '<=', $to_date)
-                        ->where('end_at', '>', $to_date); // Task starts within, ends after
-                    });
-                });
-            })
-            ->with(['task' => function ($query) use ($from_date, $to_date) {
-                $query->where(function ($q) use ($from_date, $to_date) {
-                    $q->where(function ($q) use ($from_date, $to_date) {
-                        $q->where('start_at', '>=', $from_date)
-                        ->where('end_at', '<=', $to_date);
-                    })->orWhere(function ($q) use ($from_date, $to_date) {
-                        $q->where('start_at', '<', $from_date)
-                        ->where('end_at', '<=', $to_date)
-                        ->where('end_at', '>=', $from_date);
-                    })->orWhere(function ($q) use ($from_date, $to_date) {
-                        $q->where('start_at', '>=', $from_date)
-                        ->where('start_at', '<=', $to_date)
-                        ->where('end_at', '>', $to_date);
-                    });
-                });
-            }])
-            ->get();
+        $resource_utilization = [];
+
+        $employees = Employee::where('company_id', Auth::user()->company_id)->all();
+
+        foreach ($employees as $key => $employee) {
+            
+            $tasks = Task::where('employee_id', $employee->id)
+                ->where('start_at', '<=', $endOfMonth)
+                ->where('end_at', '>=', $today)
+                ->get();
+
+            $totalSeconds = 0;
+
+            foreach ($tasks as $task) {
+                // Clamp task start and end within the target date range
+                $start = Carbon::parse($task->start_at)->max($today);
+                $end = Carbon::parse($task->end_at)->min($endOfMonth);
+
+                $current = $start->copy()->startOfDay();
+
+                while ($current <= $end) {
+                    // Skip Sundays (or also Saturdays if needed)
+                    if (!$current->isSunday()) {
+                        // Define working hour window
+                        $workStart = $current->copy()->setTime(9, 0);  // 9:00 AM
+                        $workEnd = $current->copy()->setTime(18, 0);   // 6:00 PM
+
+                        // Get the actual overlapping time between task and workday
+                        $dayStart = $start->copy()->max($workStart);
+                        $dayEnd = $end->copy()->min($workEnd);
+
+                        if ($dayStart < $dayEnd) {
+                            $totalSeconds += $dayEnd->diffInSeconds($dayStart);
+                        }
+                    }
+
+                    $current->addDay();
+                }
+            }
+
+            $totalHours = round($totalSeconds / 3600, 2);
+
+            $resource_utilization[] = [
+                'employee_id' => $employee->id,
+                'allocated_hours' => $totalHours,
+                'available_hours' => 100,
+                'billable_hours' => 100,
+                'non_billable_hours' => 10
+            ];
+        }
+
+        dd($resource_utilization);
 
         return response()->json(['employees' => $employees]);
     }
