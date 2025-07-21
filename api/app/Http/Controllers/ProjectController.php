@@ -56,14 +56,39 @@ class ProjectController extends Controller
             return response()->json(['errors' => $validator->errors()], 422);
         }
 
-        $project = Project::create([
+        Project::create([
             'name' => $request->input('name'),
             'budget' => $request->input('budget'),
             'estimated_hours' => $request->input('estimated_hours'),
             'company_id' => Auth::user()->company_id,
         ]);
 
-        return response()->json(['message' => 'Project created successfully', 'project' => $project], 201);
+        $projects = Project::with('employees')->where('company_id', Auth::user()->company_id)->get();
+
+        $projects = $projects->map(function($project){
+
+            [$total_hours, $total_expenses] = $this->getTotalProjectExpenses($project->id);
+
+            return [
+                'id' => $project->id,
+                'name' => $project->name,
+                'budget' => $project->budget,
+                'color' => $project->color,
+                'is_billable' => $project->is_billable,
+                'estimated_hours' => $project->estimated_hours,
+                'is_over_budget' => ( $project->budget - $total_expenses ) < 0, // example condition
+                'budget_expenses_difference' => $project->budget - $total_expenses,
+                'label' => strtoupper($project->name),        // custom formatted value
+                'created_at_formatted' => $project->created_at->format('Y-m-d'),
+                'total_billable_hours' => $total_hours,
+                'total_project_expenses' => $total_expenses,
+                'selected_employees' => $project->employees->pluck('id'),
+                // Add any relationship data if needed
+                'client_name' => optional($project->client)->name,
+            ];
+        });
+
+        return response()->json(['message' => 'Project created successfully', 'projects' => $projects], 201);
     }
 
     public function update(Request $request, $id)

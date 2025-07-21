@@ -131,6 +131,7 @@ export default function TeamMemberListing({ members, setMembers }) {
                 onClose={() => setIsAddModalOpen(false)}
                 name={name}
                 email={email}
+                password={password}
                 setName={setName}
                 setEmail={setEmail}
                 setPassword={setPassword}

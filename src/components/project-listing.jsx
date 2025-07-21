@@ -68,8 +68,8 @@ export default function ProjectListing({ projects, employees, setProjects }) {
             throw new Error(errorData.message || "Failed to create project");
         }
 
-        const newProject = await response.json();
-        setProjects((prev) => [...prev, newProject.project]);
+        const projects = await response.json();
+        setProjects(projects.projects);
         setIsAddModalOpen(false);
     };
 

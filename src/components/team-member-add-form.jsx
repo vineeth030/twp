@@ -65,7 +65,6 @@ export default function TeamMemberAddForm({
             newErrors.password = 'Password must be at least 6 characters long';
             isValid = false;
         }
-
         setErrors(newErrors);
         return isValid;
     };
