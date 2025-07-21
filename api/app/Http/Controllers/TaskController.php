@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Project;
 use App\Models\Task;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Log;
@@ -26,6 +27,8 @@ class TaskController extends Controller
 
         Log::info("Data: ", [$request->all()]);
 
+        $is_billable = Project::where('id', $request->input('project_id'))->value('is_billable');
+
         $task = Task::create([
             'name' => $request->input('name'),
             'start_at' => Carbon::parse($request->input('start_at')),
@@ -33,7 +36,8 @@ class TaskController extends Controller
             'employee_id' => $request->input('employee_id'),
             'company_id' => Auth::user()->company_id,
             'project_id' => $request->input('project_id'),
-            'total_hours' => $request->input('totalWorkingHours')
+            'total_hours' => $request->input('totalWorkingHours'),
+            'billable' => $is_billable
         ]);
 
         return response()->json(['message' => 'Task created successfully', 'task' => $task], 201);
@@ -75,13 +79,15 @@ class TaskController extends Controller
         $task = Task::findOrFail($request->input('id'));
 
         Log::info('Update Data: ', [
-        'name' => $request->input('name'),
-        'start_at' => Carbon::parse($request->input('start_at')),
-        'end_at' => Carbon::parse($request->input('end_at')),
-        'employee_id' => $request->input('employee_id'),
-        'is_all_day' => false,
-        'project_id' => $request->input('project_id'),
-    ]);
+            'name' => $request->input('name'),
+            'start_at' => Carbon::parse($request->input('start_at')),
+            'end_at' => Carbon::parse($request->input('end_at')),
+            'employee_id' => $request->input('employee_id'),
+            'is_all_day' => false,
+            'project_id' => $request->input('project_id'),
+        ]);
+
+        $is_billable = Project::where('id', $request->input('project_id'))->value('is_billable');
 
         $task->update([
             'name' => $request->input('name'),
@@ -90,6 +96,7 @@ class TaskController extends Controller
             'employee_id' => $request->input('employee_id'),
             'is_all_day' => false,
             'project_id' => $request->input('project_id'),
+            'billable' => $is_billable
         ]);
 
         return response()->json(['message' => 'Task updated successfully']);

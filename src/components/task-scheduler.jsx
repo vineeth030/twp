@@ -243,6 +243,7 @@ export default function TaskScheduler({ employees, tasks, projects }) {
       
 
     const editorTemplate = (props) => {
+
         return (
           <div className="custom-event-editor">
             <div className="form-group">

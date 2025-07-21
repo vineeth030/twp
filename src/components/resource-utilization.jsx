@@ -46,9 +46,9 @@ export default function ResourceUtilization() {
         
         const employeeResourceUtilization = await response.json();
 
-        console.log('Resource data: ', employeeResourceUtilization.data);
+        console.log('Resource data: ', employeeResourceUtilization.employees);
 
-        setEmployeesResourceUtilization(employeeResourceUtilization.data);
+        setEmployeesResourceUtilization(employeeResourceUtilization.employees);
     } 
 
     return (
@@ -63,26 +63,21 @@ export default function ResourceUtilization() {
                 <tr className="border-b">
                     <th className="px-2 py-3 border-b">Employee</th>
                     <th className="px-2 py-3 border-b">Available Hours</th>
-                    <th className="px-2 py-3 border-b">Allocated Hours</th>
                     <th className="px-2 py-3 border-b">Billable Hours</th>
                     <th className="px-2 py-3 border-b">Non Billable Hours</th>
                 </tr>
                 </thead>
                 <tbody>
-                <tr className="border-b">
-                    <th className="px-2 py-2 font-medium text-gray-700 bg-gray-50">John Doe</th>
-                    <td className="px-2 py-2">40</td>
-                    <td className="px-2 py-2">35</td>
-                    <td className="px-2 py-2">30</td>
-                    <td className="px-2 py-2">5</td>
-                </tr>
-                <tr className="border-b">
-                    <th className="px-2 py-2 font-medium text-gray-700 bg-gray-50">Jane Smith</th>
-                    <td className="px-2 py-2">40</td>
-                    <td className="px-2 py-2">38</td>
-                    <td className="px-2 py-2">36</td>
-                    <td className="px-2 py-2">2</td>
-                </tr>
+                    {
+                        employeesResourceUtilization.map(employee => (
+                            <tr className="border-b">
+                                <th className="px-2 py-2 font-medium text-gray-700 bg-gray-50">{employee.employee_name}</th>
+                                <td className="px-2 py-2">{employee.available_hours}</td>
+                                <td className="px-2 py-2">{employee.billable_hours}</td>
+                                <td className="px-2 py-2">{employee.non_billable_hours}</td>
+                            </tr>
+                            ))
+                    }
                 </tbody>
             </table>
         </div>

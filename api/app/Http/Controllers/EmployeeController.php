@@ -72,25 +72,56 @@ class EmployeeController extends Controller
         return response()->json(['employees' => Employee::where('company_id', Auth::user()->company_id)->with(['task'])->get()]);
     }
 
-    public function resourceUtilization($from_date, $to_date) {
+    public function resourceUtilization(Request $request) {
+
+        
+        $totalHoursOfEmployees = $this->getBillableHours();
+        //dd($resource_utilization);
+
+        return response()->json(['employees' => $totalHoursOfEmployees]);
+    }
+
+    private function getAvailableHours($start, $end){
+
+        $totalAvailableSeconds = 0;
+
+        $current = Carbon::parse($start)->copy()->startOfDay();
+        $end = Carbon::parse($end)->copy()->endOfDay();
+
+        while ($current <= $end) {
+            if (!$current->isWeekend()) {
+                // 9 working hours per day = 9 * 3600 seconds
+                $totalAvailableSeconds += 9 * 3600;
+            }
+
+            $current->addDay();
+        }
+
+        $availableHours = round($totalAvailableSeconds / 3600, 2);
+
+        return $availableHours;
+    }
+
+    private function getBillableHours(){
 
         $today = Carbon::today();
         $endOfMonth = Carbon::now()->endOfMonth();
 
         $resource_utilization = [];
 
-        $employees = Employee::where('company_id', Auth::user()->company_id)->all();
+        $employees = Employee::where('company_id', Auth::user()->company_id)->get();
 
         foreach ($employees as $key => $employee) {
             
-            $tasks = Task::where('employee_id', $employee->id)
+            $billableTasks = Task::where('employee_id', $employee->id)
+                ->where('billable', 1)
                 ->where('start_at', '<=', $endOfMonth)
                 ->where('end_at', '>=', $today)
                 ->get();
 
-            $totalSeconds = 0;
+            $billableTotalSeconds = 0;
 
-            foreach ($tasks as $task) {
+            foreach ($billableTasks as $task) {
                 // Clamp task start and end within the target date range
                 $start = Carbon::parse($task->start_at)->max($today);
                 $end = Carbon::parse($task->end_at)->min($endOfMonth);
@@ -99,7 +130,7 @@ class EmployeeController extends Controller
 
                 while ($current <= $end) {
                     // Skip Sundays (or also Saturdays if needed)
-                    if (!$current->isSunday()) {
+                    if (!$current->isWeekend()) {
                         // Define working hour window
                         $workStart = $current->copy()->setTime(9, 0);  // 9:00 AM
                         $workEnd = $current->copy()->setTime(18, 0);   // 6:00 PM
@@ -109,7 +140,7 @@ class EmployeeController extends Controller
                         $dayEnd = $end->copy()->min($workEnd);
 
                         if ($dayStart < $dayEnd) {
-                            $totalSeconds += $dayEnd->diffInSeconds($dayStart);
+                            $billableTotalSeconds += $dayEnd->diffInSeconds($dayStart);
                         }
                     }
 
@@ -117,19 +148,54 @@ class EmployeeController extends Controller
                 }
             }
 
-            $totalHours = round($totalSeconds / 3600, 2);
+            $nonBillableTasks = Task::where('employee_id', $employee->id)
+                ->where('billable', 0)
+                ->where('start_at', '<=', $endOfMonth)
+                ->where('end_at', '>=', $today)
+                ->get();
+
+            $nonBillableTotalSeconds = 0;
+
+            foreach ($nonBillableTasks as $task) {
+                // Clamp task start and end within the target date range
+                $start = Carbon::parse($task->start_at)->max($today);
+                $end = Carbon::parse($task->end_at)->min($endOfMonth);
+
+                $current = $start->copy()->startOfDay();
+
+                while ($current <= $end) {
+                    // Skip Sundays (or also Saturdays if needed)
+                    if (!$current->isWeekend()) {
+                        // Define working hour window
+                        $workStart = $current->copy()->setTime(9, 0);  // 9:00 AM
+                        $workEnd = $current->copy()->setTime(18, 0);   // 6:00 PM
+
+                        // Get the actual overlapping time between task and workday
+                        $dayStart = $start->copy()->max($workStart);
+                        $dayEnd = $end->copy()->min($workEnd);
+
+                        if ($dayStart < $dayEnd) {
+                            $nonBillableTotalSeconds += $dayEnd->diffInSeconds($dayStart);
+                        }
+                    }
+
+                    $current->addDay();
+                }
+            }
+
+            $nonBillableTotalHours = round($nonBillableTotalSeconds / 3600, 2);
+            $billableTotalHours = round($billableTotalSeconds / 3600, 2);
+            $availableHours = $this->getAvailableHours($today, $endOfMonth);
 
             $resource_utilization[] = [
                 'employee_id' => $employee->id,
-                'allocated_hours' => $totalHours,
-                'available_hours' => 100,
-                'billable_hours' => 100,
-                'non_billable_hours' => 10
+                'employee_name' => $employee->name,
+                'available_hours' => $availableHours,
+                'billable_hours' => abs($billableTotalHours),
+                'non_billable_hours' => abs($nonBillableTotalHours)
             ];
         }
 
-        dd($resource_utilization);
-
-        return response()->json(['employees' => $employees]);
+        return $resource_utilization;
     }
 }
