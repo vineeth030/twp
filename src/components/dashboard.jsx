@@ -95,13 +95,13 @@ export default function Dashboard() {
                             <button onClick={() => {setShowResourceUtilization(false); setShowEmployees(false); setShowTeamMembers(false);setShowProjects(false);}} class="text-gray-600 hover:text-blue-600">Home</button>
                             )}
                             { !showProjects && (user.is_company_owner == 1) && (
-                            <button onClick={() => {setShowProjects(prev => !prev); setShowResourceUtilization(false); setShowEmployees(false); setShowTeamMembers(false);}} class="text-gray-600 hover:text-blue-600">Manage Projects</button>
+                            <button onClick={() => {setShowProjects(prev => !prev); setShowResourceUtilization(false); setShowEmployees(false); setShowTeamMembers(false);}} class="text-gray-600 hover:text-blue-600">Projects</button>
                             )}
                             { !showTeamMembers && (user.is_company_owner == 1) && (
-                            <button onClick={() => {setShowTeamMembers(prev => !prev); setShowResourceUtilization(false); setShowEmployees(false); setShowProjects(false);}} class="text-gray-600 hover:text-blue-600">Manage Team Members</button>
+                            <button onClick={() => {setShowTeamMembers(prev => !prev); setShowResourceUtilization(false); setShowEmployees(false); setShowProjects(false);}} class="text-gray-600 hover:text-blue-600">Managers</button>
                             )}
                             { !showEmployees && (
-                            <button onClick={() => {setShowEmployees(prev => !prev); setShowResourceUtilization(false); setShowTeamMembers(false); setShowProjects(false);}} class="text-gray-600 hover:text-blue-600">Manage Employees</button>
+                            <button onClick={() => {setShowEmployees(prev => !prev); setShowResourceUtilization(false); setShowTeamMembers(false); setShowProjects(false);}} class="text-gray-600 hover:text-blue-600">Employees</button>
                             )}
                             { !showResourceUtilization && (
                             <button onClick={() => {setShowResourceUtilization(prev => !prev); setShowTeamMembers(false); setShowProjects(false); setShowEmployees(false);}} class="text-gray-600 hover:text-blue-600">Resource Utilization</button>

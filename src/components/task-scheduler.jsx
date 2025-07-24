@@ -64,6 +64,7 @@ export default function TaskScheduler({ employees, tasks, projects }) {
             const selectedProject = projects.find(p => p.id === args.data.project_id);
             if (selectedProject) {
                 args.data.project_name = selectedProject.name;
+                args.data.project_color = selectedProject.color;
             }
         }
 
@@ -205,15 +206,17 @@ export default function TaskScheduler({ employees, tasks, projects }) {
     // }
 
     const handleRenderCell = (args) => {
-        if (args.elementType === 'emptyCells' || args.elementType === 'resourceHeaderCells') {
-            //const cellDate = new Date(args.data.date);
-            //const day = cellDate.getDay();
-            // if (day === 0 || day === 6) {
-            //     args.element.classList.add('weekend-disabled');
-            // } else {
-            //     args.element.classList.add('workday-highlight');
-            // }
-        }
+        if (args.elementType == "workCells") {
+            // To change the color of weekend columns in week view
+            if (args.date) {
+              if (args.date.getDay() === 6) {
+                (args.element).style.background = '#ffdea2';
+              }
+              if (args.date.getDay() === 0) {
+                (args.element).style.background = '#ffdea2';
+              }
+            }
+          }
     };
 
     const handlePopupOpen = (args) => {
@@ -232,13 +235,27 @@ export default function TaskScheduler({ employees, tasks, projects }) {
         //   }
       };
 
+    // const EventTemplate = (props) => {
+    //     return (
+    //       <div style={{ padding: '1px', backgroundColor: '#ccc' }}>
+    //         <div><strong>{props.project_name} AA</strong></div>
+    //         <div>{props.name}</div>
+    //       </div>
+    //     );
+    // };
+
     const EventTemplate = (props) => {
-        return (
-          <div style={{ padding: '1px' }}>
-            <div><strong>{props.project_name}</strong></div>
-            <div>{props.name}</div>
-          </div>
-        );
+        const fontColor = { color: '#fff' }
+        return (<div className="template-wrap">
+          <div className="project-name" style={fontColor}>{props.project_name}</div>
+          <div className="task-name" style={fontColor}>{props.name}</div>
+        </div>);
+    }
+
+    const handleEventRendered = (args) => {
+        if (args.data.project_color) {
+          args.element.style.backgroundColor = args.data.project_color;
+        }
     };
       
 
@@ -314,6 +331,7 @@ export default function TaskScheduler({ employees, tasks, projects }) {
                         dateHeaderTemplate={dateHeaderTemplate} 
                         resourceHeaderTemplate={resourceHeaderTemplate}
                         editorTemplate={editorTemplate}
+                        eventRendered={handleEventRendered}
                         renderCell={handleRenderCell}
                         workDays={[1, 2, 3, 4, 5]}
                         rowAutoHeight={true}
@@ -324,7 +342,8 @@ export default function TaskScheduler({ employees, tasks, projects }) {
                             endTime: { name: 'end_at' },
                             isAllDay: { name: 'is_all_day' },
                             projectId: { name: 'project_id' },
-                            projectName: {name: 'project_name' } 
+                            projectName: {name: 'project_name' },
+                            projectColor: {name: 'project_color'} 
                         }}} 
                         actionBegin={handleActionBegin}
                         popupOpen={handlePopupOpen}

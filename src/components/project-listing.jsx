@@ -69,6 +69,7 @@ export default function ProjectListing({ projects, employees, setProjects }) {
         }
 
         const projects = await response.json();
+        console.log('projects: ', projects.projects)
         setProjects(projects.projects);
         setIsAddModalOpen(false);
     };

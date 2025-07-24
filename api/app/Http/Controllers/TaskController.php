@@ -54,7 +54,8 @@ class TaskController extends Controller
                 'is_all_day' => $task->is_all_day,
                 'employee_id' => $task->employee_id,
                 'project_id' => $task->project_id,
-                'project_name' => $task->project->name
+                'project_name' => $task->project->name,
+                'project_color' => $task->project->color
             ];
         });
 
