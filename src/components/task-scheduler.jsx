@@ -56,9 +56,6 @@ export default function TaskScheduler({ employees, tasks, projects }) {
     
     const handleActionBegin = async ( args ) => {
 
-        console.log('Event type:', args.requestType);
-        console.log('Event data:', args.data);
-
         // Add project_name before saving
         if (args.data && args.data.project_id) {
             const selectedProject = projects.find(p => p.id === args.data.project_id);
@@ -79,8 +76,6 @@ export default function TaskScheduler({ employees, tasks, projects }) {
         if (args.requestType === 'eventCreate') {
 
             let data = await calculateHoursInATask(args.data[0])
-            console.log('Create Task Data: ', args.data[0])
-            console.log('After calculate: ', data)
             createTask(data);
         }
     }
@@ -125,8 +120,6 @@ export default function TaskScheduler({ employees, tasks, projects }) {
             currentDate.setHours(0, 0, 0, 0); // Reset time to midnight
         }
 
-        console.log(`Total working hours: ${totalWorkingHours}`);
-
         // Optional: add to your eventData
         eventData.totalWorkingHours = totalWorkingHours;
 
@@ -147,16 +140,16 @@ export default function TaskScheduler({ employees, tasks, projects }) {
                     'Authorization': `Bearer ${token}`
                 },
             });
-            console.log('Task deleted successfully');
+
         } catch (error) {
-            console.error('Failed to delete task:', error);
+            //console.error('Failed to delete task:', error);
         }
 
     }
 
     const updateTask = async (task) => {
         const token = localStorage.getItem('token');
-        console.log('updateTask', task);
+        
         try {
             await fetch(`${API_BASE_URL}/api/tasks`, {
                 method: 'PATCH',
@@ -166,9 +159,9 @@ export default function TaskScheduler({ employees, tasks, projects }) {
                 },
                 body: JSON.stringify(task)
             });
-            console.log('Task updated successfully');
+            //console.log('Task updated successfully');
         } catch (error) {
-            console.error('Failed to delete task:', error);
+            //console.error('Failed to delete task:', error);
         }
 
     }
@@ -184,9 +177,9 @@ export default function TaskScheduler({ employees, tasks, projects }) {
                 },
                 body: JSON.stringify(task)
             });
-            console.log('Task created successfully');
+            //console.log('Task created successfully');
         } catch (error) {
-            console.error('Failed to delete task:', error);
+            //console.error('Failed to delete task:', error);
         }
     }
 
@@ -342,8 +335,7 @@ export default function TaskScheduler({ employees, tasks, projects }) {
                             endTime: { name: 'end_at' },
                             isAllDay: { name: 'is_all_day' },
                             projectId: { name: 'project_id' },
-                            projectName: {name: 'project_name' },
-                            projectColor: {name: 'project_color'} 
+                            projectName: {name: 'project_name' }
                         }}} 
                         actionBegin={handleActionBegin}
                         popupOpen={handlePopupOpen}
