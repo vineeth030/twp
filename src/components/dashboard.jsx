@@ -5,12 +5,16 @@ import TaskScheduler from "./task-scheduler";
 import useAuth from "./auth/useAuth";
 import TeamMemberListing from "./team-member-listing";
 import ProjectListing from "./project-listing";
+import { Routes, Route, Link, NavLink, useNavigate } from "react-router-dom";
+import Profile from "./profile";
+import Settings from "./settings";
 
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
 
 export default function Dashboard() {
     
     const { logout, user } = useAuth();
+    const navigate = useNavigate();
 
     const [employees, setEmployees] = useState([])
     const [showEmployees, setShowEmployees] = useState(false);
@@ -43,9 +47,7 @@ export default function Dashboard() {
 
     const handleLogout = async () => {
         const success = await logout();
-        if (success) {
-        //setUser(data);
-        }
+        if (success) navigate("/login");
     }
 
     const fetchTeamMembers = () => {
@@ -91,21 +93,45 @@ export default function Dashboard() {
                     <div class="flex items-center space-x-6 ml-4">
                         <div class="text-xl font-bold text-gray-800">Task Manager</div>
                         <div class="flex space-x-4">
-                            { (showEmployees || showTeamMembers || showProjects || showResourceUtilization) && (
-                            <button onClick={() => {setShowResourceUtilization(false); setShowEmployees(false); setShowTeamMembers(false);setShowProjects(false);}} class="text-gray-600 hover:text-blue-600">Home</button>
+                            <NavLink to="/dashboard/home"
+                                className={({ isActive }) =>
+                                    isActive
+                                    ? "text-blue-600 font-semibold border-b-2 border-blue-600"
+                                    : "text-gray-600 hover:text-blue-600"
+                                }
+                            >Home</NavLink>
+                            {user.is_company_owner == 1 && (
+                            <>
+                                <NavLink to="/dashboard/projects"
+                                    className={({ isActive }) =>
+                                        isActive
+                                        ? "text-blue-600 font-semibold border-b-2 border-blue-600"
+                                        : "text-gray-600 hover:text-blue-600"
+                                    }
+                                >Projects</NavLink>
+                                <NavLink to="/dashboard/managers"
+                                    className={({ isActive }) =>
+                                        isActive
+                                        ? "text-blue-600 font-semibold border-b-2 border-blue-600"
+                                        : "text-gray-600 hover:text-blue-600"
+                                    }
+                                >Managers</NavLink>
+                            </>
                             )}
-                            { !showProjects && (user.is_company_owner == 1) && (
-                            <button onClick={() => {setShowProjects(prev => !prev); setShowResourceUtilization(false); setShowEmployees(false); setShowTeamMembers(false);}} class="text-gray-600 hover:text-blue-600">Manage Projects</button>
-                            )}
-                            { !showTeamMembers && (user.is_company_owner == 1) && (
-                            <button onClick={() => {setShowTeamMembers(prev => !prev); setShowResourceUtilization(false); setShowEmployees(false); setShowProjects(false);}} class="text-gray-600 hover:text-blue-600">Manage Team Members</button>
-                            )}
-                            { !showEmployees && (
-                            <button onClick={() => {setShowEmployees(prev => !prev); setShowResourceUtilization(false); setShowTeamMembers(false); setShowProjects(false);}} class="text-gray-600 hover:text-blue-600">Manage Employees</button>
-                            )}
-                            { !showResourceUtilization && (
-                            <button onClick={() => {setShowResourceUtilization(prev => !prev); setShowTeamMembers(false); setShowProjects(false); setShowEmployees(false);}} class="text-gray-600 hover:text-blue-600">Resource Utilization</button>
-                            )}
+                            <NavLink to="/dashboard/employees"
+                                className={({ isActive }) =>
+                                    isActive
+                                    ? "text-blue-600 font-semibold border-b-2 border-blue-600"
+                                    : "text-gray-600 hover:text-blue-600"
+                                }
+                            >Employees</NavLink>
+                            <NavLink to="/dashboard/resource-utilization"
+                                className={({ isActive }) =>
+                                    isActive
+                                    ? "text-blue-600 font-semibold border-b-2 border-blue-600"
+                                    : "text-gray-600 hover:text-blue-600"
+                                }
+                            >Resource Utilization</NavLink>
                         </div>
                     </div>
 
@@ -118,8 +144,9 @@ export default function Dashboard() {
                         </div>
 
                         <div class="absolute right-0 mt-2 w-40 bg-white border rounded-md shadow-md opacity-0 group-hover:opacity-100 invisible group-hover:visible transition duration-200 z-50">
-                            <button class="block w-full px-4 py-2 text-gray-700 hover:bg-gray-100">Profile</button>
-                            <button class="block w-full px-4 py-2 text-gray-700 hover:bg-gray-100">Settings</button>
+                            {/* <a href="/profile" class="block w-full px-4 py-2 text-gray-700 hover:bg-gray-100">Profile</a> */}
+                            <Link to="/dashboard/profile" className="block w-full px-4 py-2 text-gray-700 hover:bg-gray-100">Profile</Link>
+                            <Link to="/dashboard/settings" className="block w-full px-4 py-2 text-gray-700 hover:bg-gray-100">Settings</Link>
                             <button href="#" onClick={() => handleLogout()} class="block w-full px-4 py-2 text-gray-700 hover:bg-gray-100">Logout</button>
                         </div>
                     </div>
@@ -127,38 +154,15 @@ export default function Dashboard() {
             </div>
 
             <main className="mx-10 min-h-[700px]">
-            {showProjects && (
-                <>
-                <ProjectListing projects={projects} employees={employees} setProjects={setProjects} />
-                </>
-            )}
-
-            {showTeamMembers && (
-                <>
-                <TeamMemberListing members={teamMembers} setMembers={setTeamMembers} />
-                </>
-            )}
-
-            {showEmployees && (
-                <>
-                <EmployeeListing employees={employees} setEmployees={setEmployees} />
-                </>
-            )}
-
-            {showResourceUtilization && (
-                <>
-                <ResourceUtilization />
-                </>
-            )}
-
-            {!showResourceUtilization && !showEmployees && !showTeamMembers && !showProjects && (
-                <>
-                {
-                <TaskScheduler employees={employees} tasks={tasks} projects={projects}/>
-                }
-                </>
-            )}
-            
+                <Routes>
+                    <Route path="/dashboard/home" element={<TaskScheduler employees={employees} tasks={tasks} projects={projects} />} />
+                    <Route path="/dashboard/projects" element={<ProjectListing projects={projects} employees={employees} setProjects={setProjects} />} />
+                    <Route path="/dashboard/managers" element={<TeamMemberListing members={teamMembers} setMembers={setTeamMembers} />} />
+                    <Route path="/dashboard/employees" element={<EmployeeListing employees={employees} setEmployees={setEmployees} />} />
+                    <Route path="/dashboard/resource-utilization" element={<ResourceUtilization />} />
+                    <Route path='/dashboard/profile' element={<Profile />} />
+                    <Route path='/dashboard/settings' element={<Settings />} />
+                </Routes>
             </main>
         </>
     )

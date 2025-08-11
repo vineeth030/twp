@@ -15,6 +15,12 @@ export default function EmployeeListing({ employees, setEmployees, setShowEmploy
     const [employeeEmail, setEmployeeEmail] = useState("")
     const [employeeDesignation, setEmployeeDesignation] = useState("")
     const [employeeHourlyRate, setEmployeeHourlyRate] = useState("")
+    const [successMessage, setSuccessMessage] = useState("")
+
+    const showMessage = (msg) => {
+        setSuccessMessage(msg);
+        setTimeout(() => setSuccessMessage(""), 3000); // hides after 3s
+    };
 
     const handleEditButtonClick = (employee) => {
         setSelectedEmployee(employee)
@@ -87,6 +93,7 @@ export default function EmployeeListing({ employees, setEmployees, setShowEmploy
         setEmployeeEmail('');
         setEmployeeDesignation('');
         setIsAddModalOpen(false);
+        showMessage("Employee added successfully");
     }
 
     const handleEditFormSubmit = async () => {
@@ -130,6 +137,7 @@ export default function EmployeeListing({ employees, setEmployees, setShowEmploy
 
         setSelectedEmployee(null);
         setIsEditModalOpen(false);
+        showMessage("Employee updated successfully");
     }
 
     const handleConfirmDelete = async () => {
@@ -153,6 +161,7 @@ export default function EmployeeListing({ employees, setEmployees, setShowEmploy
             setEmployees((prev) =>
                 prev.filter((emp) => emp.id !== selectedEmployee.id)
             );
+            showMessage("Employee deleted successfully");
 
         } catch (error) {
             console.error('Failed to delete employee:', error);
@@ -161,6 +170,13 @@ export default function EmployeeListing({ employees, setEmployees, setShowEmploy
 
     return (
         <div class="overflow-x-auto pt-5">
+
+            {successMessage && (
+                <div className="mb-4 p-2 text-sm text-green-800 bg-green-100 border border-green-300 rounded">
+                    {successMessage}
+                </div>
+            )}
+
             <h1>Employees</h1>
             <div className="flex justify-end mb-2">
                 <button onClick={ () => handleAddButtonClick() } className="px-3 py-1 text-sm text-white bg-blue-500 rounded hover:bg-blue-600">Add Employee</button>

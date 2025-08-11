@@ -16,6 +16,12 @@ export default function ProjectListing({ projects, employees, setProjects }) {
     const [estimatedHours, setEstimatedHours] = useState("");
     const [isBillable, setIsBillable] = useState(true);
     const [selectedEmployees, setSelectedEmployees] = useState([]);
+    const [successMessage, setSuccessMessage] = useState("");
+
+    const showMessage = (msg) => {
+        setSuccessMessage(msg);
+        setTimeout(() => setSuccessMessage(""), 3000); // hides after 3s
+    };
 
     const handleEditButtonClick = (project) => {
         console.log('project data: ', project)
@@ -69,8 +75,10 @@ export default function ProjectListing({ projects, employees, setProjects }) {
         }
 
         const projects = await response.json();
+        console.log('projects: ', projects.projects)
         setProjects(projects.projects);
         setIsAddModalOpen(false);
+        showMessage("Project added successfully");
     };
 
     const handleEditFormSubmit = async () => {
@@ -110,6 +118,7 @@ export default function ProjectListing({ projects, employees, setProjects }) {
         );
         setIsEditModalOpen(false);
         setSelectedProject(null);
+        showMessage("Project updated successfully");
     };
 
     const handleConfirmDelete = async () => {
@@ -126,10 +135,18 @@ export default function ProjectListing({ projects, employees, setProjects }) {
         setProjects((prev) => prev.filter((proj) => proj.id !== selectedProject.id));
         setIsDeleteModalOpen(false);
         setSelectedProject(null);
+        showMessage("Project deleted successfully");
     };
 
     return (
         <div className="overflow-x-auto pt-5">
+
+            {successMessage && (
+                <div className="mb-4 p-2 text-sm text-green-800 bg-green-100 border border-green-300 rounded">
+                    {successMessage}
+                </div>
+            )}
+
             <h1>Projects</h1>
             <div className="flex justify-end mb-2">
                 <button

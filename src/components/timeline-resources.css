@@ -86,6 +86,31 @@
     border-radius: 4px;
 }
 
+.e-schedule .e-appointment {
+    height: 50px !important;
+    border-radius: 5px !important;
+}
+
+.e-schedule .template-wrap {
+    height: 100%;
+    white-space: normal;
+}
+
+.e-schedule .template-wrap .project-name {
+    font-weight: 600;
+    font-size: 13px;
+    padding: 4px 6px 0px;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    overflow: hidden;
+}
+
+.e-schedule .template-wrap .task-name {
+    height: 50px;
+    font-size: 12px;
+    padding: 0px 6px 0px;
+    overflow: hidden;
+}
 
 @media (max-width: 550px) {
     .e-schedule .e-day-view .employee-image {

@@ -14,6 +14,12 @@ export default function TeamMemberListing({ members, setMembers }) {
     const [name, setName] = useState("");
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
+    const [successMessage, setSuccessMessage] = useState("");
+
+    const showMessage = (msg) => {
+        setSuccessMessage(msg);
+        setTimeout(() => setSuccessMessage(""), 3000); // hides after 3s
+    };
 
     const handleAdd = () => setIsAddModalOpen(true);
     const handleEdit = (member) => {
@@ -46,6 +52,7 @@ export default function TeamMemberListing({ members, setMembers }) {
         setName("");
         setEmail("");
         setIsAddModalOpen(false);
+        showMessage("Manager added successfully");
     };
 
     const updateMember = async () => {
@@ -66,6 +73,7 @@ export default function TeamMemberListing({ members, setMembers }) {
             );
             setSelectedMember(null);
             setIsEditModalOpen(false);
+            showMessage("Manager updated successfully");
         }
     };
 
@@ -79,13 +87,21 @@ export default function TeamMemberListing({ members, setMembers }) {
         setMembers(prev => prev.filter(m => m.id !== selectedMember.id));
         setIsDeleteModalOpen(false);
         setSelectedMember(null);
+        showMessage("Manager deleted successfully");
     };
 
     return (
         <div className="overflow-x-auto pt-5">
-            <h1>Teams</h1>
+
+            {successMessage && (
+                <div className="mb-4 p-2 text-sm text-green-800 bg-green-100 border border-green-300 rounded">
+                    {successMessage}
+                </div>
+            )}
+
+            <h1>Managers</h1>
             <div className="flex justify-end mb-2">
-                <button onClick={handleAdd} className="px-3 py-1 text-sm text-white bg-blue-500 rounded hover:bg-blue-600">Add Team Member</button>
+                <button onClick={handleAdd} className="px-3 py-1 text-sm text-white bg-blue-500 rounded hover:bg-blue-600">Add Manager</button>
             </div>
             <table className="min-w-full text-sm text-left text-gray-500 border border-gray-200">
                 <thead className="text-xs text-gray-700 uppercase bg-gray-100">

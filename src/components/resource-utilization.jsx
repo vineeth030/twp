@@ -70,7 +70,7 @@ export default function ResourceUtilization() {
                 <tbody>
                     {
                         employeesResourceUtilization.map(employee => (
-                            <tr className="border-b">
+                            <tr key={employee.employee_id} className="border-b">
                                 <th className="px-2 py-2 font-medium text-gray-700 bg-gray-50">{employee.employee_name}</th>
                                 <td className="px-2 py-2">{employee.available_hours}</td>
                                 <td className="px-2 py-2">{employee.billable_hours}</td>
