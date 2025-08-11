@@ -75,10 +75,10 @@ class EmployeeController extends Controller
     public function resourceUtilization(Request $request) {
 
         
-        $totalHoursOfEmployees = $this->getBillableHours();
+        //$totalHoursOfEmployees = $this->getBillableHours();
         //dd($resource_utilization);
 
-        return response()->json(['employees' => $totalHoursOfEmployees]);
+        return response()->json($this->getBillableHours($request->get('from_date'), $request->get('to_date')));
     }
 
     private function getAvailableHours($start, $end){
@@ -102,12 +102,14 @@ class EmployeeController extends Controller
         return $availableHours;
     }
 
-    private function getBillableHours(){
+    private function getBillableHours($from_date, $to_date){
 
-        $today = Carbon::today();
-        $endOfMonth = Carbon::now()->endOfMonth();
+        $from_date = Carbon::parse($from_date);
+        $to_date = Carbon::parse($to_date);
 
-        $resource_utilization = [];
+        $resource_utilization = []; $employeeNamesArray = []; 
+        $nonBillableTotalHoursArray = []; $billableTotalHoursArray = [];
+        $availableHoursArray = [];
 
         $employees = Employee::where('company_id', Auth::user()->company_id)->get();
 
@@ -115,16 +117,16 @@ class EmployeeController extends Controller
             
             $billableTasks = Task::where('employee_id', $employee->id)
                 ->where('billable', 1)
-                ->where('start_at', '<=', $endOfMonth)
-                ->where('end_at', '>=', $today)
+                ->where('start_at', '<=', $to_date)
+                ->where('end_at', '>=', $from_date)
                 ->get();
 
             $billableTotalSeconds = 0;
 
             foreach ($billableTasks as $task) {
                 // Clamp task start and end within the target date range
-                $start = Carbon::parse($task->start_at)->max($today);
-                $end = Carbon::parse($task->end_at)->min($endOfMonth);
+                $start = Carbon::parse($task->start_at)->max($from_date);
+                $end = Carbon::parse($task->end_at)->min($to_date);
 
                 $current = $start->copy()->startOfDay();
 
@@ -150,16 +152,16 @@ class EmployeeController extends Controller
 
             $nonBillableTasks = Task::where('employee_id', $employee->id)
                 ->where('billable', 0)
-                ->where('start_at', '<=', $endOfMonth)
-                ->where('end_at', '>=', $today)
+                ->where('start_at', '<=', $to_date)
+                ->where('end_at', '>=', $from_date)
                 ->get();
 
             $nonBillableTotalSeconds = 0;
 
             foreach ($nonBillableTasks as $task) {
                 // Clamp task start and end within the target date range
-                $start = Carbon::parse($task->start_at)->max($today);
-                $end = Carbon::parse($task->end_at)->min($endOfMonth);
+                $start = Carbon::parse($task->start_at)->max($from_date);
+                $end = Carbon::parse($task->end_at)->min($to_date);
 
                 $current = $start->copy()->startOfDay();
 
@@ -185,7 +187,12 @@ class EmployeeController extends Controller
 
             $nonBillableTotalHours = round($nonBillableTotalSeconds / 3600, 2);
             $billableTotalHours = round($billableTotalSeconds / 3600, 2);
-            $availableHours = $this->getAvailableHours($today, $endOfMonth);
+            $availableHours = $this->getAvailableHours($from_date, $to_date);
+
+            $employeeNamesArray[] = $employee->name;
+            $availableHoursArray[] = $availableHours;
+            $billableTotalHoursArray[] = abs($billableTotalHours);
+            $nonBillableTotalHoursArray[] = abs($nonBillableTotalHours); 
 
             $resource_utilization[] = [
                 'employee_id' => $employee->id,
@@ -196,6 +203,12 @@ class EmployeeController extends Controller
             ];
         }
 
-        return $resource_utilization;
+        return [
+            'employees' => $resource_utilization,
+            'employeeNames' => $employeeNamesArray,
+            'availableHours' => $availableHours,
+            'billableTotalHours' => $billableTotalHoursArray,
+            'nonBillableTotalHours' => $nonBillableTotalHoursArray
+        ];
     }
 }

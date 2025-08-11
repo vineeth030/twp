@@ -80,7 +80,7 @@ export default function Profile() {
     }
 
     return (
-        <div className="mx-auto p-5 bg-white shadow rounded">
+        <div className="mx-auto p-5 bg-white">
             {successMessage && (
                 <div className="mb-4 p-2 text-sm text-green-800 bg-green-100 border border-green-300 rounded">
                     {successMessage}
@@ -89,7 +89,7 @@ export default function Profile() {
 
             <h1>Profile</h1>
 
-            <form onSubmit={handleSubmit} className="space-y-6 mt-10">
+            <form onSubmit={handleSubmit} className="space-y-6 mt-10 shadow rounded p-5">
                 {/* Company Name */}
                 <div>
                     <label className="block text-sm font-medium mb-1">Company Name</label>
