@@ -18,11 +18,13 @@ class DatabaseSeeder extends Seeder
     public function run(): void
     {
         $companyOne = Company::create([
-            'name' => 'One'
+            'name' => 'One',
+            'currency' => 'USD'
         ]);
 
         $company = Company::create([
-            'name' => 'Cubet'
+            'name' => 'Cubet',
+            'currency' => 'USD'
         ]);
 
         $projectOne = Project::create([
@@ -69,5 +71,7 @@ class DatabaseSeeder extends Seeder
             'company_id' => $company->id,
             'project_id' => rand(1,2)
         ]);
+
+        $this->call(WorkSchedulesSeeder::class);
     }
 }

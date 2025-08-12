@@ -7,6 +7,8 @@ use App\Http\Controllers\AuthController;
 use App\Http\Controllers\TaskController;
 use App\Http\Controllers\ProjectController;
 use App\Http\Controllers\EmployeeController;
+use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\SettingsController;
 use App\Http\Controllers\TeamMemberController;
 
 Route::middleware('auth:sanctum')->group(function () {
@@ -41,6 +43,12 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::delete('/tasks/{id}', [TaskController::class, 'destroy']);
     Route::patch('/tasks', [TaskController::class, 'update']);
     Route::get('/tasks', [TaskController::class, 'index']);
+
+    Route::get('/settings', [SettingsController::class, 'show']);
+    Route::post('/settings', [SettingsController::class, 'update']);
+
+    Route::get('/profile', [ProfileController::class, 'show']);
+    Route::post('/profile', [ProfileController::class, 'update']);
 
     Route::post('/logout', [AuthController::class, 'logout']);
 });

@@ -49,8 +49,7 @@ export default function Profile() {
 
         const token = localStorage.getItem("token");
         const payload = {
-            company_name: companyName,
-            ...(password ? { password } : {}) // Only include password if provided
+            ...(password ? { password, password_confirmation: confirmPassword } : {})
         };
 
         try {
@@ -90,8 +89,8 @@ export default function Profile() {
             <h1>Profile</h1>
 
             <form onSubmit={handleSubmit} className="space-y-6 mt-10 shadow rounded p-5">
-                {/* Company Name */}
-                <div>
+                
+                {/* <div>
                     <label className="block text-sm font-medium mb-1">Company Name</label>
                     <input
                         type="text"
@@ -100,7 +99,7 @@ export default function Profile() {
                         className="border rounded px-2 py-1 w-full"
                         required
                     />
-                </div>
+                </div> */}
 
                 {/* Password */}
                 <div>

@@ -48,8 +48,8 @@ export default function Settings() {
 
         const payload = {
             holidays,
-            working_hours_start: workingHoursStart,
-            working_hours_end: workingHoursEnd,
+            workingHoursStart: workingHoursStart,
+            workingHoursEnd: workingHoursEnd,
             currency
         };
 

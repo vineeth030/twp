@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Employee;
 use App\Models\Task;
+use App\Models\WorkSchedule;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Arr;
@@ -113,6 +114,8 @@ class EmployeeController extends Controller
 
         $employees = Employee::where('company_id', Auth::user()->company_id)->get();
 
+        $schedule = WorkSchedule::where('company_id', Auth::user()->company_id)->first();
+
         foreach ($employees as $key => $employee) {
             
             $billableTasks = Task::where('employee_id', $employee->id)
@@ -132,10 +135,10 @@ class EmployeeController extends Controller
 
                 while ($current <= $end) {
                     // Skip Sundays (or also Saturdays if needed)
-                    if (!$current->isWeekend()) {
+                    if (!in_array($current->format('l'), $schedule->weekends)) {
                         // Define working hour window
-                        $workStart = $current->copy()->setTime(9, 0);  // 9:00 AM
-                        $workEnd = $current->copy()->setTime(18, 0);   // 6:00 PM
+                        $workStart = $current->copy()->setTimeFromTimeString($schedule->start_time);
+                        $workEnd = $current->copy()->setTimeFromTimeString($schedule->end_time);
 
                         // Get the actual overlapping time between task and workday
                         $dayStart = $start->copy()->max($workStart);
