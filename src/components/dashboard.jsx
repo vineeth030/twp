@@ -93,7 +93,7 @@ export default function Dashboard() {
                     <div class="flex items-center space-x-6 ml-4">
                         <div class="text-xl font-bold text-gray-800">Task Manager</div>
                         <div class="flex space-x-4">
-                            <NavLink to="/dashboard/home"
+                            <NavLink to="/"
                                 className={({ isActive }) =>
                                     isActive
                                     ? "text-blue-600 font-semibold border-b-2 border-blue-600"
@@ -155,7 +155,7 @@ export default function Dashboard() {
 
             <main className="mx-10 min-h-[700px]">
                 <Routes>
-                    <Route path="/dashboard/home" element={<TaskScheduler employees={employees} tasks={tasks} projects={projects} />} />
+                    <Route path="/" element={<TaskScheduler employees={employees} tasks={tasks} projects={projects} />} />
                     <Route path="/dashboard/projects" element={<ProjectListing projects={projects} employees={employees} setProjects={setProjects} />} />
                     <Route path="/dashboard/managers" element={<TeamMemberListing members={teamMembers} setMembers={setTeamMembers} />} />
                     <Route path="/dashboard/employees" element={<EmployeeListing employees={employees} setEmployees={setEmployees} />} />

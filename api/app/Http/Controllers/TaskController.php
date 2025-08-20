@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Project;
 use App\Models\Task;
+use App\Models\WorkSchedule;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Http\Request;
@@ -12,6 +13,48 @@ use Illuminate\Support\Facades\Validator;
 
 class TaskController extends Controller
 {
+    private function calculateHours($start_at, $end_at, $company_id){
+        $start = Carbon::parse($start_at);
+        $end = Carbon::parse($end_at);
+
+        $totalSeconds = 0;
+
+        $schedule = WorkSchedule::where('company_id', $company_id)->first();
+
+        $current = $start->copy()->startOfDay();
+
+        Log::info('Start of the day: ', [$current]);
+
+        while ($current <= $end) {
+            // Skip Sundays (or also Saturdays if needed)
+            if (!in_array($current->format('l'), $schedule->weekends)) {
+                // Define working hour window
+                $workStart = $current->copy()->setTimeFromTimeString($schedule->start_time);
+                $workEnd = $current->copy()->setTimeFromTimeString($schedule->end_time);
+
+                // Get the actual overlapping time between task and workday
+                $dayStart = $start->copy()->max($workStart);
+                $dayEnd = $end->copy()->min($workEnd);
+
+                if ($dayStart < $dayEnd) {
+                    Log::info('--');
+                    Log::info('Day start: ', [$dayStart]);
+                    Log::info('Day end: ', [$dayEnd]);
+
+                    $totalSeconds += $dayEnd->diffInSeconds($dayStart);
+
+                    Log::info('Hours: ', [abs(round($totalSeconds / 3600, 2))]);
+                }
+            }
+
+            $current->addDay();
+        }
+
+        $totalHours = abs(round($totalSeconds / 3600, 2));
+
+        return $totalHours;
+    }
+
     public function store(Request $request)
     {
         $validator = Validator::make($request->all(), [
@@ -20,6 +63,8 @@ class TaskController extends Controller
             'end_at' => 'nullable|date|after:start_at',
             'employee_id' => 'nullable|exists:employees,id', // Assuming you have a 'users' table
         ]);
+
+        Log::info("Data: ", [$request->all()]);
 
         if ($validator->fails()) {
             return response()->json(['errors' => $validator->errors()], 422);
@@ -36,7 +81,7 @@ class TaskController extends Controller
             'employee_id' => $request->input('employee_id'),
             'company_id' => Auth::user()->company_id,
             'project_id' => $request->input('project_id'),
-            'total_hours' => $request->input('totalWorkingHours'),
+            'total_hours' => $this->calculateHours($request->input('start_at'), $request->input('end_at'), Auth::user()->company_id),
             'billable' => $is_billable
         ]);
 
@@ -97,6 +142,7 @@ class TaskController extends Controller
             'employee_id' => $request->input('employee_id'),
             'is_all_day' => false,
             'project_id' => $request->input('project_id'),
+            'total_hours' => $this->calculateHours($request->input('start_at'), $request->input('end_at'), Auth::user()->company_id),
             'billable' => $is_billable
         ]);
 

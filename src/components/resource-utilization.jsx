@@ -70,10 +70,10 @@ export default function ResourceUtilization() {
     return (
         <>
             <h1 className="ml-5">Resource Utilization</h1>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6 p-5">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6 pt-6">
             
             {/* Table */}
-            <div className="overflow-x-auto pt-5">
+            <div className="overflow-x-auto p-5 border shadow">
                 <div className="flex gap-5 mb-2">
                     <DatePickerComponent change={(e) => setFromDate(e.value)} value={fromDate}  id="fromDate" placeholder="From date" />
                     <DatePickerComponent change={(e) => setToDate(e.value)} value={toDate} id="fromDate" placeholder="To date" />
@@ -103,7 +103,7 @@ export default function ResourceUtilization() {
             </div>
 
             {/* Chart */}
-            <div className="flex items-center justify-center">
+            <div className="flex items-center justify-center p-5 border shadow">
                 { barChartData && <HorizontalBarChart data={barChartData} maxValue={maxValue} />}
             </div>
 

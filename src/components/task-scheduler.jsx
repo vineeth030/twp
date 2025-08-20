@@ -70,13 +70,14 @@ export default function TaskScheduler({ employees, tasks, projects }) {
         }
 
         if (args.requestType === 'eventChange') {
+            console.log('Args Data: ', args.data)
             updateTask(args.data);
         }
         
         if (args.requestType === 'eventCreate') {
-
-            let data = await calculateHoursInATask(args.data[0])
-            createTask(data);
+            console.log('Args Data: ', args.data[0])
+            //let data = await calculateHoursInATask(args.data[0])
+            createTask(args.data[0]);
         }
     }
 
