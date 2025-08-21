@@ -110,7 +110,7 @@ class EmployeeController extends Controller
 
         $resource_utilization = []; $employeeNamesArray = []; 
         $nonBillableTotalHoursArray = []; $billableTotalHoursArray = [];
-        $availableHoursArray = [];
+        $availableHoursArray = [];$availableHours = 0;
 
         $employees = Employee::where('company_id', Auth::user()->company_id)->get();
 

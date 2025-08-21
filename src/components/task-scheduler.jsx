@@ -5,6 +5,7 @@ import './timeline-resources.css';
 import { extend } from '@syncfusion/ej2-base';
 import { DateTimePickerComponent } from '@syncfusion/ej2-react-calendars';
 import { DropDownListComponent } from '@syncfusion/ej2-react-dropdowns';
+import { Routes, Route, Link, NavLink, useNavigate } from "react-router-dom";
 
 import { registerLicense } from '@syncfusion/ej2-base';
 
@@ -81,52 +82,6 @@ export default function TaskScheduler({ employees, tasks, projects }) {
         }
     }
 
-    const calculateHoursInATask = (eventData) => {
-        const startDate = new Date(eventData.start_at);
-        const endDate = new Date(eventData.end_at);
-
-        // Working hours definition
-        const WORK_DAY_START_HOUR = 9;
-        const WORK_DAY_END_HOUR = 17;
-        const WORK_DAY_HOURS = WORK_DAY_END_HOUR - WORK_DAY_START_HOUR;
-
-        const isWorkingDay = (date) => {
-            const day = date.getDay();
-            return day !== 0 && day !== 6; // 0 = Sunday, 6 = Saturday
-        };
-
-        let totalWorkingHours = 0;
-        let currentDate = new Date(startDate);
-
-        while (currentDate <= endDate) {
-            if (isWorkingDay(currentDate)) {
-                if (currentDate.toDateString() === startDate.toDateString()) {
-                    // First day
-                    const startHour = Math.max(startDate.getHours() + startDate.getMinutes() / 60, WORK_DAY_START_HOUR);
-                    const endHour = WORK_DAY_END_HOUR;
-                    totalWorkingHours += Math.max(0, Math.min(endHour, WORK_DAY_END_HOUR) - startHour);
-                } else if (currentDate.toDateString() === endDate.toDateString()) {
-                    // Last day
-                    const startHour = WORK_DAY_START_HOUR;
-                    const endHour = Math.min(endDate.getHours() + endDate.getMinutes() / 60, WORK_DAY_END_HOUR);
-                    totalWorkingHours += Math.max(0, endHour - startHour);
-                } else {
-                    // Full working day in between
-                    totalWorkingHours += WORK_DAY_HOURS;
-                }
-            }
-
-            // Move to next day
-            currentDate.setDate(currentDate.getDate() + 1);
-            currentDate.setHours(0, 0, 0, 0); // Reset time to midnight
-        }
-
-        // Optional: add to your eventData
-        eventData.totalWorkingHours = totalWorkingHours;
-
-        return eventData;
-    }
-
     const deleteTask = async (data) => {
 
         const token = localStorage.getItem('token');
@@ -184,21 +139,6 @@ export default function TaskScheduler({ employees, tasks, projects }) {
         }
     }
 
-    // const handleOnAddTask = () => {
-    //     console.log('handleOnAddTask');
-    //     const date = scheduleObj.current.selectedDate;
-
-    //     const cellData = {
-    //         Id: scheduleObj.current.getEventMaxID(),
-    //         Subject: '',
-    //         StartTime: new Date(date.getFullYear(), date.getMonth(), date.getDate(), new Date().getHours(), 0, 0),
-    //         EndTime: new Date(date.getFullYear(), date.getMonth(), date.getDate(), new Date().getHours() + 1, 0, 0),
-    //         IsAllDay: false
-    //       };
-      
-    //     scheduleObj.current.openEditor(cellData, 'Add');
-    // }
-
     const handleRenderCell = (args) => {
         if (args.elementType == "workCells") {
             // To change the color of weekend columns in week view
@@ -218,25 +158,7 @@ export default function TaskScheduler({ employees, tasks, projects }) {
           args.cancel = true; // prevent quick popup
           scheduleObj.current.openEditor(args.data, args.target.classList.contains('e-appointment') ? 'Save' : 'Add');
         }
-
-        // if (args.type === 'Editor') {
-        //     setTimeout(() => {
-        //       const dialog = document.querySelector('.e-schedule-dialog .e-dlg-header');
-        //       if (dialog) {
-        //         dialog.textContent = args.data.Id ? 'Edit Booking' : 'New Booking';
-        //       }
-        //     }, 0);
-        //   }
       };
-
-    // const EventTemplate = (props) => {
-    //     return (
-    //       <div style={{ padding: '1px', backgroundColor: '#ccc' }}>
-    //         <div><strong>{props.project_name} AA</strong></div>
-    //         <div>{props.name}</div>
-    //       </div>
-    //     );
-    // };
 
     const EventTemplate = (props) => {
         const fontColor = { color: '#fff' }
@@ -318,7 +240,7 @@ export default function TaskScheduler({ employees, tasks, projects }) {
         <div className='col-lg-12 control-section'>
             <div className='control-wrapper drag-sample-wrapper'>
                 <div className="schedule-container">
-                    <ScheduleComponent cssClass='block-events' width='100%' startHour='08:00' endHour='20:00' 
+                    { projects.length > 0 && employees.length > 0 && <ScheduleComponent cssClass='block-events' width='100%' startHour='08:00' endHour='20:00' 
                         selectedDate={new Date()}
                         ref={scheduleObj} 
                         currentView='TimelineMonth'
@@ -348,7 +270,14 @@ export default function TaskScheduler({ employees, tasks, projects }) {
                             <ViewDirective option='TimelineMonth'/>
                         </ViewsDirective>
                         <Inject services={[TimelineMonth, Resize, DragAndDrop]}/>
-                    </ScheduleComponent>
+                    </ScheduleComponent> }
+                    { (projects.length == 0 || employees.length == 0) &&
+                    <div className="flex items-center justify-center h-screen">
+                        <p className="text-xl font-medium text-gray-600">
+                            Create an <Link to="/dashboard/employees" className='text-blue-600'> employee </Link> and a <Link to="/dashboard/projects" className='text-blue-600'> project </Link> to start scheduling tasks.
+                        </p>
+                    </div>
+                    }
                 </div>
             </div>
         </div>

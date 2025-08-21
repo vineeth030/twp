@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Company;
 use App\Models\User;
+use App\Models\WorkSchedule;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Log;
@@ -41,7 +42,8 @@ class AuthController extends Controller
         ]);
 
         $company = Company::create([
-            'name' => $request->companyName
+            'name' => $request->companyName,
+            'currency' => 'USD'
         ]);
     
         $user = User::create([
@@ -50,6 +52,13 @@ class AuthController extends Controller
             'email' => $request->email,
             'password' => Hash::make($request->password),
             'is_company_owner' => 1,
+        ]);
+
+        WorkSchedule::create([
+            'company_id' => $company->id,
+            'weekends' => ['Saturday', 'Sunday'],
+            'start_time' => '09:00:00',
+            'end_time' => '18:00:00'
         ]);
     
         $token = $user->createToken('rm-chrome-extension')->plainTextToken;

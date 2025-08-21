@@ -190,6 +190,7 @@ export default function EmployeeListing({ employees, setEmployees, setShowEmploy
                     <th class="px-2 py-3 border-b">Action</th>
                     </tr>
                 </thead>
+                { employees &&
                 <tbody>
                     { 
                         employees.map((employee) => (
@@ -206,8 +207,14 @@ export default function EmployeeListing({ employees, setEmployees, setShowEmploy
                     ))
                     }
                     
-                </tbody>
+                </tbody> }
             </table>
+
+            { employees.length == 0 && 
+                <div className='text-center mt-10'>
+                    <p>No entries found.</p>
+                </div>
+            }
 
             <ConfirmDeleteModal
                 isOpen={isDeleteModalOpen}

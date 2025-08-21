@@ -156,6 +156,7 @@ export default function ProjectListing({ projects, employees, setProjects }) {
                     Add Project
                 </button>
             </div>
+            
             <table className="min-w-full text-sm text-left text-gray-500 border border-gray-200">
                 <thead className="text-xs text-gray-700 uppercase bg-gray-100">
                     <tr className="border-b">
@@ -168,6 +169,7 @@ export default function ProjectListing({ projects, employees, setProjects }) {
                         <th className="px-2 py-3 border-b">Action</th>
                     </tr>
                 </thead>
+                { projects.length > 0 && 
                 <tbody>
                     {projects && projects.map((project) => (
                         <tr key={project.id} className="bg-white hover:bg-gray-50">
@@ -208,8 +210,14 @@ export default function ProjectListing({ projects, employees, setProjects }) {
                             </td>
                         </tr>
                     ))}
-                </tbody>
+                </tbody> }
             </table>
+
+            { projects.length == 0 && 
+                <div className='text-center mt-10'>
+                    <p>No entries found.</p>
+                </div>
+            }
 
             <ConfirmDeleteModal
                 isOpen={isDeleteModalOpen}

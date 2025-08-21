@@ -69,48 +69,66 @@ export default function ResourceUtilization() {
 
     return (
         <>
-            <h1 className="ml-5">Resource Utilization</h1>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6 pt-6">
-            
-            {/* Table */}
-            <div className="overflow-x-auto p-5 border shadow">
-                <div className="flex gap-5 mb-2">
-                    <DatePickerComponent change={(e) => setFromDate(e.value)} value={fromDate}  id="fromDate" placeholder="From date" />
-                    <DatePickerComponent change={(e) => setToDate(e.value)} value={toDate} id="fromDate" placeholder="To date" />
-                </div>
-                <table className="min-w-full text-sm text-left text-gray-500 border border-gray-200">
+          <h1 className="ml-5">Resource Utilization</h1>
+      
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 pt-6">
+            {/* Table Section */}
+            <div className="overflow-x-auto p-5 border shadow flex items-center justify-center">
+              {employeesResourceUtilization.length > 0 ? (
+                <div className="w-full">
+                  <div className="flex gap-5 mb-2">
+                    <DatePickerComponent
+                      change={(e) => setFromDate(e.value)}
+                      value={fromDate}
+                      id="fromDate"
+                      placeholder="From date"
+                    />
+                    <DatePickerComponent
+                      change={(e) => setToDate(e.value)}
+                      value={toDate}
+                      id="toDate"
+                      placeholder="To date"
+                    />
+                  </div>
+      
+                  <table className="min-w-full text-sm text-left text-gray-500 border border-gray-200">
                     <thead className="text-xs text-gray-700 uppercase bg-gray-100">
-                    <tr className="border-b">
+                      <tr className="border-b">
                         <th className="px-2 py-3 border-b">Employee</th>
                         <th className="px-2 py-3 border-b">Available Hours</th>
                         <th className="px-2 py-3 border-b">Billable Hours</th>
                         <th className="px-2 py-3 border-b">Non Billable Hours</th>
-                    </tr>
+                      </tr>
                     </thead>
                     <tbody>
-                        {
-                            employeesResourceUtilization.map(employee => (
-                                <tr key={employee.employee_id} className="border-b">
-                                    <th className="px-2 py-2 font-medium text-gray-700 bg-gray-50">{employee.employee_name}</th>
-                                    <td className="px-2 py-2">{employee.available_hours}</td>
-                                    <td className="px-2 py-2">{employee.billable_hours}</td>
-                                    <td className="px-2 py-2">{employee.non_billable_hours}</td>
-                                </tr>
-                                ))
-                        }
+                      {employeesResourceUtilization.map((employee) => (
+                        <tr key={employee.employee_id} className="border-b">
+                          <th className="px-2 py-2 font-medium text-gray-700 bg-gray-50">
+                            {employee.employee_name}
+                          </th>
+                          <td className="px-2 py-2">{employee.available_hours}</td>
+                          <td className="px-2 py-2">{employee.billable_hours}</td>
+                          <td className="px-2 py-2">{employee.non_billable_hours}</td>
+                        </tr>
+                      ))}
                     </tbody>
-                </table>
+                  </table>
+                </div>
+              ) : (
+                <span className="text-gray-500 text-lg font-medium">
+                  No entries found
+                </span>
+              )}
             </div>
-
-            {/* Chart */}
+      
+            {/* Chart Section */}
             <div className="flex items-center justify-center p-5 border shadow">
-                { barChartData && <HorizontalBarChart data={barChartData} maxValue={maxValue} />}
+              {barChartData &&
+                <HorizontalBarChart data={barChartData} maxValue={maxValue} />
+                }
             </div>
-
-
-        </div>
+          </div>
         </>
-        
-
-    )
+      );
+      
 }

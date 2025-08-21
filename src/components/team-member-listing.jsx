@@ -111,7 +111,7 @@ export default function TeamMemberListing({ members, setMembers }) {
                         <th className="px-2 py-3 border-b">Action</th>
                     </tr>
                 </thead>
-                <tbody>
+                { members && <tbody>
                     {members.map(member => (
                         <tr key={member.id} className="bg-white hover:bg-gray-50">
                             <td className="px-2 py-2 border-b">{member.name}</td>
@@ -122,8 +122,14 @@ export default function TeamMemberListing({ members, setMembers }) {
                             </td>
                         </tr>
                     ))}
-                </tbody>
+                </tbody> }
             </table>
+
+            { members.length == 0 && 
+                <div className='text-center mt-10'>
+                    <p>No entries found.</p>
+                </div>
+            }
 
             <ConfirmDeleteModal
                 isOpen={isDeleteModalOpen}
