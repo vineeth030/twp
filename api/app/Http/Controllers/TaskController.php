@@ -85,7 +85,19 @@ class TaskController extends Controller
             'billable' => $is_billable
         ]);
 
-        return response()->json(['message' => 'Task created successfully', 'task' => $task], 201);
+        $taskWithExtraFields = [
+            'id' => $task->id,
+            'name' => $task->name, // or 'Subject' if you're using legacy keys
+            'start_at' => $task->start_at ? $task->start_at->toIso8601String() : null,
+            'end_at' => $task->end_at ? $task->end_at->toIso8601String() : null,
+            'is_all_day' => $task->is_all_day,
+            'employee_id' => $task->employee_id,
+            'project_id' => $task->project_id,
+            'project_name' => $task->project->name,
+            'project_color' => $task->project->color
+        ];
+
+        return response()->json(['message' => 'Task created successfully', 'task' => $taskWithExtraFields], 201);
     }
 
     public function index()
@@ -146,7 +158,19 @@ class TaskController extends Controller
             'billable' => $is_billable
         ]);
 
-        return response()->json(['message' => 'Task updated successfully']);
+        $taskWithExtraFields = [
+            'id' => $task->id,
+            'name' => $task->name, // or 'Subject' if you're using legacy keys
+            'start_at' => $task->start_at ? $task->start_at->toIso8601String() : null,
+            'end_at' => $task->end_at ? $task->end_at->toIso8601String() : null,
+            'is_all_day' => $task->is_all_day,
+            'employee_id' => $task->employee_id,
+            'project_id' => $task->project_id,
+            'project_name' => $task->project->name,
+            'project_color' => $task->project->color
+        ];
+
+        return response()->json(['message' => 'Task updated successfully', 'task' => $taskWithExtraFields]);
     }
 
 

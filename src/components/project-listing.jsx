@@ -5,7 +5,7 @@ import ProjectAddFormModal from "./project-add-form";
 
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
 
-export default function ProjectListing({ projects, employees, setProjects }) {
+export default function ProjectListing({ projects, employees, setProjects, setTasks }) {
     const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
     const [isEditModalOpen, setIsEditModalOpen] = useState(false);
     const [isAddModalOpen, setIsAddModalOpen] = useState(false);
@@ -52,6 +52,9 @@ export default function ProjectListing({ projects, employees, setProjects }) {
 
     const handleAddFormSubmit = async () => {
         const token = localStorage.getItem("token");
+
+        console.log('projectColor: ', projectColor)
+        console.log('selected employees: ', selectedEmployees)
 
         const response = await fetch(`${API_BASE_URL}/api/projects`, {
             method: "POST",
@@ -116,6 +119,20 @@ export default function ProjectListing({ projects, employees, setProjects }) {
                     : proj
             )
         );
+
+        setTasks((prev) =>
+            prev.map((task) =>
+              task.project_id === selectedProject.id
+                ? {
+                    ...task,
+                    project_id: selectedProject.id,
+                    project_name: projectName,
+                    project_color: projectColor
+                  }
+                : task
+            )
+        );
+
         setIsEditModalOpen(false);
         setSelectedProject(null);
         showMessage("Project updated successfully");

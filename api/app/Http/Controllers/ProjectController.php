@@ -56,12 +56,19 @@ class ProjectController extends Controller
             return response()->json(['errors' => $validator->errors()], 422);
         }
 
-        Project::create([
+        $project = Project::create([
             'name' => $request->input('name'),
             'budget' => $request->input('budget'),
             'estimated_hours' => $request->input('estimated_hours'),
             'company_id' => Auth::user()->company_id,
+            'color' => $request->input('color'),
         ]);
+
+        if ($request->filled('selected_employees')) {
+            $project->employees()->sync($request->input('selected_employees'));
+        } else {
+            $project->employees()->sync([]); // remove all if none selected
+        }
 
         $projects = Project::with('employees')->where('company_id', Auth::user()->company_id)->get();
 

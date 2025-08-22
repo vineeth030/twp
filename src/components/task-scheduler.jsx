@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { useEffect, useRef } from 'react';
+import { useMemo, useState, useEffect, useRef } from 'react';
 import { ScheduleComponent, ViewsDirective, ViewDirective, TimelineViews, Inject, ResourcesDirective, ResourceDirective, Resize, DragAndDrop, TimelineMonth, Day } from '@syncfusion/ej2-react-schedule';
 import './timeline-resources.css';
 import { extend } from '@syncfusion/ej2-base';
@@ -13,10 +13,10 @@ const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
 
 registerLicense('ORg4AjUWIQA/Gnt2XFhhQlJHfV5AQmBIYVp/TGpJfl96cVxMZVVBJAtUQF1hTH5WdEVjUHpZcXZRR2lbWkZ/')
 
-export default function TaskScheduler({ employees, tasks, projects }) {
+export default function TaskScheduler({ employees, tasks, projects, setTasks }) {
     const scheduleObj = useRef(null);
 
-    const data = extend([], tasks, null, true);
+    let data = extend([], tasks, null, true);
 
     const getEmployeeName = (value) => {
         return value.resourceData[value.resource.textField];
@@ -27,6 +27,10 @@ export default function TaskScheduler({ employees, tasks, projects }) {
     const getEmployeeHours = (value) => {
         return value.resourceData.hours;
     };
+
+    useEffect(() => {
+        console.log('Track task value changes: ', tasks)
+    }, [tasks])
 
     const resourceHeaderTemplate = (props) => {
         return (<div className="template-wrap">
@@ -76,7 +80,16 @@ export default function TaskScheduler({ employees, tasks, projects }) {
         }
         
         if (args.requestType === 'eventCreate') {
-            console.log('Args Data: ', args.data[0])
+
+            if (args.data[0] && args.data[0].project_id) {
+                const selectedProject = projects.find(p => p.id === args.data[0].project_id);
+                if (selectedProject) {
+                    args.data[0].project_name = selectedProject.name;
+                    args.data[0].project_color = selectedProject.color;
+                }
+            }
+
+            console.log('Args Data: ', args.data)
             //let data = await calculateHoursInATask(args.data[0])
             createTask(args.data[0]);
         }
@@ -89,13 +102,17 @@ export default function TaskScheduler({ employees, tasks, projects }) {
         const taskId = Array.isArray(deletedTask) ? deletedTask[0].id : deletedTask.id;
     
         try {
-            await fetch(`${API_BASE_URL}/api/tasks/${taskId}`, {
+            const response = await fetch(`${API_BASE_URL}/api/tasks/${taskId}`, {
             method: 'DELETE',
                 headers: {
                     'Content-Type': 'application/json',
                     'Authorization': `Bearer ${token}`
                 },
             });
+
+            if (!response.ok) throw new Error("Failed to delete task");
+
+            setTasks((prev) => prev.filter((task) => task.id !== taskId));
 
         } catch (error) {
             //console.error('Failed to delete task:', error);
@@ -107,7 +124,7 @@ export default function TaskScheduler({ employees, tasks, projects }) {
         const token = localStorage.getItem('token');
         
         try {
-            await fetch(`${API_BASE_URL}/api/tasks`, {
+            const response = await fetch(`${API_BASE_URL}/api/tasks`, {
                 method: 'PATCH',
                 headers: {
                     'Content-Type': 'application/json',
@@ -115,7 +132,14 @@ export default function TaskScheduler({ employees, tasks, projects }) {
                 },
                 body: JSON.stringify(task)
             });
-            //console.log('Task updated successfully');
+            
+
+            if (!response.ok) throw new Error("Failed to update task");
+
+            const updatedTask = await response.json();
+
+            setTasks((prev) => prev.map((task) => (task.id === updatedTask.task.id ? updatedTask.task : task)));
+
         } catch (error) {
             //console.error('Failed to delete task:', error);
         }
@@ -123,9 +147,10 @@ export default function TaskScheduler({ employees, tasks, projects }) {
     }
 
     const createTask = async (task) => {
+        console.log('Create Task');
         const token = localStorage.getItem('token');
         try {
-            await fetch(`${API_BASE_URL}/api/tasks`, {
+            const response = await fetch(`${API_BASE_URL}/api/tasks`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -133,7 +158,13 @@ export default function TaskScheduler({ employees, tasks, projects }) {
                 },
                 body: JSON.stringify(task)
             });
-            //console.log('Task created successfully');
+            
+            const newTask = await response.json();
+
+            console.log('New Task: ', newTask);
+
+            setTasks((prev) => [...prev, newTask.task]);
+
         } catch (error) {
             //console.error('Failed to delete task:', error);
         }

@@ -155,8 +155,8 @@ export default function Dashboard() {
 
             <main className="mx-10 min-h-[700px]">
                 <Routes>
-                    <Route path="/" element={<TaskScheduler employees={employees} tasks={tasks} projects={projects} />} />
-                    <Route path="/dashboard/projects" element={<ProjectListing projects={projects} employees={employees} setProjects={setProjects} />} />
+                    <Route path="/" element={<TaskScheduler employees={employees} tasks={tasks} projects={projects} setTasks={setTasks} />} />
+                    <Route path="/dashboard/projects" element={<ProjectListing projects={projects} employees={employees} setProjects={setProjects} setTasks={setTasks} />} />
                     <Route path="/dashboard/managers" element={<TeamMemberListing members={teamMembers} setMembers={setTeamMembers} />} />
                     <Route path="/dashboard/employees" element={<EmployeeListing employees={employees} setEmployees={setEmployees} />} />
                     <Route path="/dashboard/resource-utilization" element={<ResourceUtilization />} />
