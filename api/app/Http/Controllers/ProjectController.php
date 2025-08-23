@@ -13,9 +13,9 @@ class ProjectController extends Controller
 {
     public function index()
     {
-        $projects = Project::with('employees')->where('company_id', Auth::user()->company_id)->get();
+        $projects = Project::with('employees')->where('company_id', Auth::user()->company_id)->paginate(2);
 
-        $projects = $projects->map(function($project){
+        $projects = $projects->getCollection()->transform(function($project){
 
             [$total_hours, $total_expenses] = $this->getTotalProjectExpenses($project->id);
 
@@ -158,8 +158,10 @@ class ProjectController extends Controller
 
             $employee = Employee::where('id', $employeeId)->first();
 
-            $total_hours = $total_hours + Task::where('project_id', $projectId)->where('employee_id', $employeeId)->sum('total_hours');
-            $total_expenses = $total_expenses + ($total_hours * $employee->hourly_rate);
+            if($employee){
+                $total_hours = $total_hours + Task::where('project_id', $projectId)->where('employee_id', $employeeId)->sum('total_hours');
+                $total_expenses = $total_expenses + ($total_hours * $employee->hourly_rate);
+            }
         }
 
         return [ $total_hours, $total_expenses ];
